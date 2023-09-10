@@ -1,0 +1,11 @@
+{
+  "detectors_to_run": "reentrancy-eth,reentrancy-no-eth,reentrancy-unlimited-gas",
+  "printers_to_run": "human-summary",
+  "exclude_informational": false,
+  "exclude_low": true,
+  "exclude_medium": false,
+  "exclude_high": false,
+  "disable_color": false,
+  "filter_paths": "mocks|test|openzeppelin|hardhat",
+  "legacy_ast": false
+}

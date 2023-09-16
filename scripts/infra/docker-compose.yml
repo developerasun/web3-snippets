@@ -1,0 +1,22 @@
+version: "3"
+services:
+  ganache:
+    container_name: local-network
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - check:/app/data # create /app/data dir on container
+  dozzle:
+    container_name: logger
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8888:8080
+
+# top level volume is for config
+volumes:
+  check:
+    labels: # adding metadata
+      com.localhost.description: "default volume config test"

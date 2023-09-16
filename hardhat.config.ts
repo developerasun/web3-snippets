@@ -1,26 +1,21 @@
 import * as dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
+import { HARDHAT_CONFIG_HELPER } from "./scripts/constants";
+
+// core plugins
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-chai-matchers";
+import "@nomicfoundation/hardhat-ethers";
+import "@nomiclabs/hardhat-solhint";
+import "@typechain/hardhat";
+
+// community plugins
 import "hardhat-contract-sizer";
 import "hardhat-log-remover";
 import "solidity-docgen";
-import "@nomiclabs/hardhat-solhint";
-import { HARDHAT_CONFIG_HELPER } from "./scripts/constants";
-import "hardhat-gas-reporter";
 
 dotenv.config({ path: "./.dev.env" });
 
-/**
- *
- * "@nomicfoundation/hardhat-toolbox" dependency includes below deps.
- * - @nomiclabs/hardhat-ethers
- * - @nomiclabs/hardhat-etherscan
- * - hardhat-gas-reporter
- * - solidity-coverage
- * - @typechain/hardhat
- *
- */
 const {
   ALCHEMY_HTTPS_SEPOLIA,
   ALCHEMY_HTTPS_MUMBAI,
@@ -57,6 +52,7 @@ const config: HardhatUserConfig = {
     // set multiple compiler version
     // prettier-ignore
     compilers: [
+      { version: "0.6.6" }, 
       { version: "0.8.0" }, 
       { version: "0.8.19" }
     ].map((ver) => {
@@ -97,8 +93,11 @@ const config: HardhatUserConfig = {
     },
   },
   typechain: {
-    outDir: "./typechain",
-    target: "ethers-v5",
+    outDir: "assets/types",
+    target: "ethers-v6",
+    alwaysGenerateOverloads: false, // should overloads with full signatures like deposit(uint256) be generated always, even if there are no overloads?
+    externalArtifacts: ["externalArtifacts/*.json"], // optional array of glob patterns with external artifacts to process (for example external libs from node_modules)
+    dontOverrideCompile: false, // defaults to false
   },
   contractSizer: {
     alphaSort: false,

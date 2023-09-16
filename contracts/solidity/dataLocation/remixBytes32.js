@@ -1,2 +1,0 @@
-// Remix bytes32 type input: 0x prefix + 64 hex characters 
-console.log("0x0000000000000000000000000000000000000000000000000000000000000001".length)

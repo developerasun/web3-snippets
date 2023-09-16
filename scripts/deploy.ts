@@ -1,8 +1,7 @@
-import { useDeployer } from "./hook/useDeployer";
-import { setPlatformFee_ } from "./run";
+import { useDeployer } from "./hook";
 
 async function main() {
-
+  await useDeployer("Box");
 }
 
 main().catch((error) => {

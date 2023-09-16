@@ -1,10 +1,6 @@
+async function _main() {}
 
-
-async function main() {
-
-}
-
-main().catch((error) => {
+_main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });

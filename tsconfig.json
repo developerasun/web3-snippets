@@ -12,7 +12,7 @@
   "include": [
     "./hardhat.config.ts",
     "./scripts",
-    "./test",
+    "./test/contracts",
     "./assets/types",
   ],
   "files": [

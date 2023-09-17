@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "pnpm exec hardhat clean",
     "_compile": "pnpm exec hardhat compile",
-    "compile": "TS_NODE_BASEURL=./dist run-s clean _compile",
+    "compile": "run-s clean _compile",
     "test:target": "pnpm compile & nodemon -w test --exec mocha -g \"Box\" --slow 2000  --reporter list",
     "tests": "pnpm compile & nodemon -w test --exec mocha -g \"unit\" --slow 2000  --reporter list",
     "doc": "pnpm exec hardhat docgen",

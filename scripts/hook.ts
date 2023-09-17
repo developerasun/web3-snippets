@@ -12,8 +12,27 @@ export async function useDeployer(contractName: string) {
   return { contract, deployer, recipient };
 }
 
+export async function useWaitBlock(contract: Contract) {
+  const receipt = await contract.deploymentTransaction()?.wait(6);
+
+  if (receipt !== undefined) {
+    let message = "";
+
+    receipt?.status === 1 ? (message = "33") : (message = "99");
+    consola.log({ message });
+  }
+}
+
+export async function useVerifier(target: string, args?: any[]) {
+  await hre.run("verify:verify", {
+    address: target,
+    constructorArguments: args,
+  });
+}
+
 // ESM
 import { consola, createConsola } from "consola";
+import { Contract } from "ethers";
 
 export async function logConfirm(message: string) {
   const consola = createConsola({

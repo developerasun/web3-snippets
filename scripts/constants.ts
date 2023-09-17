@@ -4,7 +4,7 @@ export const INTERFACE_ID = {
   erc721: "0x80ac58cd",
   erc777: "0xe58e113c",
   erc1155: "0xd9b67a26",
-};
+} as const;
 
 export const HARDHAT_CONFIG_HELPER = {
   compiler: {

@@ -1,7 +1,7 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { useDeployer } from "../scripts/hook";
+import { useDeployer } from "../../scripts/hook";
 
 const contractName = "Box";
 const PREFIX = `unit-${contractName}`;

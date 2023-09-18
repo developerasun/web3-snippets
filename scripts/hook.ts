@@ -1,5 +1,8 @@
 import { ethers } from "hardhat";
 import hre from "hardhat";
+import { consola, createConsola } from "consola";
+import { Contract, Interface, InterfaceAbi, Mnemonic, TransactionReceipt } from "ethers";
+import TEST_ABI from "../assets/abi/MyToken.polygonMumbai.json";
 
 export async function useDeployer(contractName: string) {
   const contract = await ethers.deployContract(contractName);
@@ -23,16 +26,29 @@ export async function useWaitBlock(contract: Contract) {
   }
 }
 
-export async function useVerifier(target: string, args?: any[]) {
+export async function useVerifier(network: string, target: string, args?: any[]) {
+  if (network === "hardhat") {
+    console.log("Invalid network target for verification");
+    process.exit(1);
+  }
   await hre.run("verify:verify", {
     address: target,
     constructorArguments: args,
   });
 }
 
-// ESM
-import { consola, createConsola } from "consola";
-import { Contract } from "ethers";
+/**
+ * @dev fetch private key with mnemonic/recovery seed
+ * @param mnemonic
+ * @returns
+ */
+export function useMnemonic(mnemonic: Mnemonic) {
+  const { privateKey, address } = ethers.HDNodeWallet.fromMnemonic(mnemonic);
+  return {
+    address,
+    privateKey,
+  };
+}
 
 export async function logConfirm(message: string) {
   const consola = createConsola({
@@ -68,32 +84,32 @@ export function useUnixTable(timestamp: number) {
   return { localDateString, yyyymmdd };
 }
 
-// export async function useErrorParser(error: any) {
-//   const { code, reason } = error;
+export async function useErrorParser(error: any) {
+  const { code, reason } = error;
 
-//   const textified = JSON.parse(JSON.stringify(error));
-//   const responseBody = JSON.parse(textified.error.error.body);
+  const textified = JSON.parse(JSON.stringify(error));
+  const responseBody = JSON.parse(textified.error.error.body);
 
-//   console.log(
-//     chalk.red(`
-//     top level debug info:
-//       code: ${code}
-//       reason: ${reason}
-//     detailed:
-//       fromContract: ${responseBody.error.message}`)
-//   );
-// }
+  console.log(
+    `
+    top level debug info:
+      code: ${code}
+      reason: ${reason}
+    detailed:
+      fromContract: ${responseBody.error.message}`
+  );
+}
 
-// export async function useEventParser(contract: Contract) {
-//   const eventList = Object.entries(contract.interface.events).map(([name, evt]) => {
-//     const contractName = "contract name here";
+export async function useEventParser(abi: Interface | InterfaceAbi) {
+  const iface = ethers.Interface.from(TEST_ABI.abi);
+  let eventMap: Record<string, string> = {};
 
-//     return {
-//       contractName,
-//       eventSig: ethers.utils.keccak256(Buffer.from(name)),
-//       eventName: name,
-//     };
-//   });
+  iface.forEachEvent((event) => {
+    eventMap[event.name] = event.topicHash;
+  });
+
+  return { eventMap };
+}
 
 //   await fs.promises.writeFile(`${process.cwd()}/event-list.json`, JSON.stringify(eventList, null, 2));
 //   return { eventList };

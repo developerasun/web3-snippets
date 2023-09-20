@@ -8,6 +8,7 @@ import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomicfoundation/hardhat-ethers";
 import "@nomiclabs/hardhat-solhint";
 import "@typechain/hardhat";
+import "tsconfig-paths/register";
 
 // community plugins
 import "hardhat-contract-sizer";

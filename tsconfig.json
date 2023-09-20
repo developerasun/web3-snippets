@@ -8,6 +8,14 @@
     "experimentalDecorators": true,
     "outDir": "dist",
     "declaration": false,
+    "paths": {
+      "@contracts/*": [
+        "./contracts/*"
+      ],
+      "@scripts/*": [
+        "./scripts/*"
+      ],
+    }
   },
   "include": [
     "./hardhat.config.ts",

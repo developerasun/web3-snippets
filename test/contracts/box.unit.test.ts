@@ -1,7 +1,7 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { useDeployer } from "../../scripts/hook";
+import { useDeployer } from "@scripts/hook";
 
 const contractName = "Box";
 const PREFIX = `unit-${contractName}`;
@@ -13,7 +13,7 @@ const useFixture = async () => {
   return { contract, owner, recipient };
 };
 
-describe.skip(`${PREFIX}-core`, function TestCore() {
+describe(`${PREFIX}-core`, function TestCore() {
   it("Should return a value", async function TestName() {
     const { contract } = await loadFixture(useFixture);
     expect(await contract.getValue()).to.equal(4);

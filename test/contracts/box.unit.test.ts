@@ -2,6 +2,10 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { useDeployer } from "@scripts/hook";
+import { Filter } from "ethers";
+import hre from "hardhat";
+
+const { ALCHEMY_KEY_MUMBAI } = process.env;
 
 const contractName = "Box";
 const PREFIX = `unit-${contractName}`;
@@ -24,5 +28,28 @@ describe(`${PREFIX}-core`, function TestCore() {
     const contract = await _contract.deploy();
 
     expect(await contract.getValue()).to.equal(4);
+  });
+
+  it.only("Should", async function TestLogFetcher() {
+    const { contract } = await loadFixture(useFixture);
+    const provider = hre.network.provider;
+
+    await contract.setValue(4);
+
+    const filter = contract.filters.ValueChanged(4);
+
+    const logs = await contract.queryFilter(filter);
+
+    logs.map((log) => {
+      const { topics } = log;
+      console.log(topics);
+    });
+    // // console.log({ filter });
+
+    // const _filter = filter as unknown as Filter;
+
+    // provider.on("connection", (res) => {
+    //   console.log(res);
+    // });
   });
 });

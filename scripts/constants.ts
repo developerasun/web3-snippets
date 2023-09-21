@@ -15,4 +15,5 @@ export const HARDHAT_CONFIG_HELPER = {
     },
   },
   reportGas: true,
+  networkNames: ["maticmum"],
 } as const;

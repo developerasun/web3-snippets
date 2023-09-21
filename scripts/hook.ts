@@ -4,6 +4,8 @@ import { consola, createConsola } from "consola";
 import { Contract, Interface, InterfaceAbi, Mnemonic, TransactionReceipt } from "ethers";
 import TEST_ABI from "../assets/abi/MyToken.polygonMumbai.json";
 
+const { ALCHEMY_KEY_MUMBAI } = process.env;
+
 export async function useDeployer(contractName: string) {
   const contract = await ethers.deployContract(contractName);
   await contract.waitForDeployment();
@@ -24,6 +26,19 @@ export async function useWaitBlock(contract: Contract) {
     receipt?.status === 1 ? (message = "33") : (message = "99");
     consola.log({ message });
   }
+}
+
+export async function useGasPrice() {
+  const provider = new ethers.AlchemyProvider("maticmum", ALCHEMY_KEY_MUMBAI);
+
+  const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await provider.getFeeData();
+
+  // console.log({ gasPrice });
+  const __gasPrice = gasPrice?.toString() ?? 0n;
+  const _gasPrice = ethers.formatUnits(__gasPrice, "gwei");
+
+  console.log({ _gasPrice });
+  // await provider.getLogs(_filter);
 }
 
 export async function useVerifier(network: string, target: string, args?: any[]) {

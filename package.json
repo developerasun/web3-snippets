@@ -33,6 +33,7 @@
   "devDependencies": {
     "@dethcrypto/eth-sdk": "^0.3.4",
     "@dethcrypto/eth-sdk-client": "^0.1.6",
+    "@eth-optimism/fee-estimation": "^0.15.2",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",
     "@nomicfoundation/hardhat-ethers": "^3.0.4",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.9",

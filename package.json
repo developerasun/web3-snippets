@@ -23,6 +23,7 @@
     "networks": "pnpm exec hardhat verify --list-networks",
     "abi:type": "pnpm typechain --target ethers-v6 --out-dir assets/abi './assets/abi/MyToken.polygonMumbai.json'",
     "tx:mum": "pnpm exec hardhat run scripts/run.ts --network polygonMumbai",
+    "tx:opt": "pnpm exec hardhat run scripts/run.ts --network optimisticEthereum",
     "deploy:sep": "pnpm exec hardhat run scripts/deploy.ts --network sepolia",
     "deploy:mum": "pnpm exec hardhat run scripts/deploy.ts --network polygonMumbai",
     "deploy:eth": "pnpm exec hardhat run scripts/deploy.ts --network ethereum",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@dethcrypto/eth-sdk": "^0.3.4",
     "@dethcrypto/eth-sdk-client": "^0.1.6",
+    "@eth-optimism/contracts-ts": "^0.15.0",
     "@eth-optimism/fee-estimation": "^0.15.2",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",
     "@nomicfoundation/hardhat-ethers": "^3.0.4",

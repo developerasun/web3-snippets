@@ -20,6 +20,7 @@ dotenv.config({ path: "./.dev.env" });
 const {
   ALCHEMY_HTTPS_SEPOLIA,
   ALCHEMY_HTTPS_MUMBAI,
+  ALCHEMY_HTTPS_OPTIMISM,
 
   ALCHEMY_KEY_GOERLI,
   ALCHEMY_HTTPS_GOERLI,
@@ -64,6 +65,10 @@ const config: HardhatUserConfig = {
     }),
   },
   networks: {
+    optimisticEthereum: {
+      url: ALCHEMY_HTTPS_OPTIMISM !== undefined ? ALCHEMY_HTTPS_OPTIMISM : "",
+      accounts: ACCOUNT_PRIVATE_KEY !== undefined ? [ACCOUNT_PRIVATE_KEY] : [],
+    },
     goerli: {
       url: ALCHEMY_HTTPS_GOERLI !== undefined ? ALCHEMY_HTTPS_GOERLI : "",
       accounts: ACCOUNT_PRIVATE_KEY !== undefined ? [ACCOUNT_PRIVATE_KEY] : [],

@@ -31,14 +31,15 @@ export async function useWaitBlock(contract: Contract) {
 export async function useGasPrice() {
   const provider = new ethers.AlchemyProvider("maticmum", ALCHEMY_KEY_MUMBAI);
 
-  const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = await provider.getFeeData();
+  const { maxFeePerGas, maxPriorityFeePerGas } = await provider.getFeeData();
 
-  // console.log({ gasPrice });
-  const __gasPrice = gasPrice?.toString() ?? 0n;
-  const _gasPrice = ethers.formatUnits(__gasPrice, "gwei");
+  const _maxFeePerGas = maxFeePerGas?.toString() ?? "0";
+  const _maxPriorityFeePerGas = maxPriorityFeePerGas?.toString() ?? "0";
 
-  console.log({ _gasPrice });
-  // await provider.getLogs(_filter);
+  const userFee = ethers.formatUnits(_maxFeePerGas!, "gwei");
+  const blockProducerTip = ethers.formatUnits(_maxPriorityFeePerGas!, "gwei");
+
+  return { userFee, blockProducerTip };
 }
 
 export async function useVerifier(network: string, target: string, args?: any[]) {

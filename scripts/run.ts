@@ -1,10 +1,10 @@
 import { ethers } from "hardhat";
-import { useEventParser, useGasPrice } from "./hook";
+import { useEventParser, useGasPrice } from "@scripts/hook.js";
 
 async function _main() {
   // useEventParser();
-  // await useGasPrice();
-  console.log(ethers.formatUnits("58819800030256", "ether"));
+  const { userFee, blockProducerTip } = await useGasPrice();
+  console.log({ userFee: userFee + "gwei", blockProducerTip: blockProducerTip + "gwei" });
 }
 
 _main().catch((error) => {

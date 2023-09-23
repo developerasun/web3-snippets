@@ -32,8 +32,6 @@
     "verify:mum": "node verify.cjs"
   },
   "devDependencies": {
-    "@dethcrypto/eth-sdk": "^0.3.4",
-    "@dethcrypto/eth-sdk-client": "^0.1.6",
     "@eth-optimism/contracts-ts": "^0.15.0",
     "@eth-optimism/fee-estimation": "^0.15.2",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.6",

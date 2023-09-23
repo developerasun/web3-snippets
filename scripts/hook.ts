@@ -1,11 +1,13 @@
 import { ethers } from "hardhat";
 import hre from "hardhat";
-import { consola, createConsola } from "consola";
 import { Contract, Interface, InterfaceAbi, Mnemonic, TransactionReceipt } from "ethers";
 import TEST_ABI from "../assets/abi/MyToken.polygonMumbai.json";
 
-const { ALCHEMY_KEY_MUMBAI } = process.env;
+const { ALCHEMY_KEY_MUMBAI, ALCHMEY_OPTIMISM_APK_KEY } = process.env;
 
+// ================================================================== //
+// =========================== common  ============================= //
+// ================================================================== //
 export async function useDeployer(contractName: string) {
   const contract = await ethers.deployContract(contractName);
   await contract.waitForDeployment();
@@ -24,7 +26,7 @@ export async function useWaitBlock(contract: Contract) {
     let message = "";
 
     receipt?.status === 1 ? (message = "33") : (message = "99");
-    consola.log({ message });
+    console.log({ message });
   }
 }
 
@@ -64,26 +66,6 @@ export function useMnemonic(mnemonic: Mnemonic) {
     address,
     privateKey,
   };
-}
-
-export async function logConfirm(message: string) {
-  const consola = createConsola({
-    reporters: [
-      {
-        log: (logObj) => {
-          console.log(JSON.stringify(logObj));
-        },
-      },
-    ],
-  });
-
-  await consola.prompt(message, {
-    type: "confirm",
-  });
-}
-
-export function logLink(txHash: `0x${string}`) {
-  consola.success("transaction done: ", `https://mumbai.polygonscan.com/tx/${txHash}`);
 }
 
 export async function useABIParser(contractName: string) {
@@ -127,6 +109,56 @@ export async function useEventParser(abi: Interface | InterfaceAbi) {
   return { eventMap };
 }
 
-//   await fs.promises.writeFile(`${process.cwd()}/event-list.json`, JSON.stringify(eventList, null, 2));
-//   return { eventList };
+// ================================================================== //
+// =========================== L2 hooks ============================= //
+// ================================================================== //
+export async function useOptismFetcher() {
+  const sdk = await import("@eth-optimism/fee-estimation");
+
+  const { getL2Client, baseFee, gasPrice } = sdk;
+
+  const params = {
+    chainId: 10,
+    rpcUrl: "https://mainnet.optimism.io",
+  };
+  const client = getL2Client(params);
+
+  const provider = new ethers.AlchemyProvider("optimism", ALCHMEY_OPTIMISM_APK_KEY);
+
+  const currentBlock = await provider.getBlock("latest");
+
+  if (currentBlock !== null) {
+    const { number, gasLimit } = currentBlock;
+
+    const _baseFee = await baseFee({ client, blockNumber: BigInt(number) });
+    const _gasPrice = await gasPrice({ client, blockNumber: BigInt(number) });
+
+    const currentBaseFee = ethers.formatUnits(_baseFee.toString(), "gwei");
+    const currentGasPrice = ethers.formatUnits(_gasPrice.toString(), "gwei");
+    const currentBlockNumber = number;
+
+    console.log({ currentBaseFee });
+    console.log({ currentGasPrice });
+    console.log({ currentBlockNumber });
+    console.log({ gasLimit });
+  }
+}
+
+// todo
+// export async function useFee() {
+//   const optimistOwnerAddress = "0x77194aa25a06f932c10c0f25090f3046af2c85a6";
+//   const tokenId = BigInt(optimistOwnerAddress);
+//   const fees = await estimateFees({
+//     client: {
+//       chainId: 10,
+//       rpcUrl: "https://mainnet.optimism.io",
+//     },
+//     functionName: "burn",
+//     abi: optimistABI,
+//     args: [tokenId],
+//     account: optimistOwnerAddress,
+//     to: "0x2335022c740d17c2837f9C884Bfe4fFdbf0A95D5",
+//   });
+
+//   console.log({ fees });
 // }

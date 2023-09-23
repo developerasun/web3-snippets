@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { useDeployer, useOptismFetcher } from "@scripts/hook";
-import { Filter } from "ethers";
+import { ContractTransactionReceipt, Filter } from "ethers";
 import hre from "hardhat";
 
 const { ALCHEMY_KEY_MUMBAI } = process.env;
@@ -30,9 +30,8 @@ describe(`${PREFIX}-core`, function TestCore() {
     expect(await contract.getValue()).to.equal(4);
   });
 
-  it.skip("Should", async function TestLogFetcher() {
+  it.skip("Should filter an event", async function TestLogFetcher() {
     const { contract } = await loadFixture(useFixture);
-    const provider = hre.network.provider;
 
     await contract.setValue(4);
 
@@ -46,7 +45,24 @@ describe(`${PREFIX}-core`, function TestCore() {
     });
   });
 
-  it.only("Should return gas info for a block", async function TestGasInfoFetch() {
+  it.only("Should check actual gas used", async function TestGasUsed() {
+    const { contract } = await loadFixture(useFixture);
+    const tx = await contract.setValue(100);
+
+    const receipt = (await tx.wait(1)) as ContractTransactionReceipt;
+    const { gasPrice, gasUsed } = receipt;
+
+    const estimatedGas = await contract.setValue.estimateGas(100);
+    const _gasPrice = ethers.formatUnits(gasPrice, "gwei");
+
+    const actualFee = ethers.formatUnits(gasPrice * gasUsed, "ether");
+    console.log({ estimatedGas });
+    console.log({ gasUsed });
+    console.log({ _gasPrice });
+    console.log({ actualFee });
+  });
+
+  it.skip("Should return gas info for a block", async function TestGasInfoFetch() {
     await useOptismFetcher();
   });
 });

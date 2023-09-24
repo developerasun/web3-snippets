@@ -2,8 +2,9 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { useDeployer, useOptismFetcher } from "@scripts/hook";
-import { ContractTransactionReceipt, Filter } from "ethers";
+import { ContractTransactionReceipt, Filter, TransactionRequest } from "ethers";
 import hre from "hardhat";
+import { Box } from "@assets/types";
 
 const { ALCHEMY_KEY_MUMBAI } = process.env;
 
@@ -17,7 +18,7 @@ const useFixture = async () => {
   return { contract, owner, recipient };
 };
 
-describe(`${PREFIX}-core`, function TestCore() {
+describe(`${PREFIX}-base`, function TestCore() {
   it.skip("Should return a value", async function TestName() {
     const { contract } = await loadFixture(useFixture);
     expect(await contract.getValue()).to.equal(4);
@@ -29,7 +30,9 @@ describe(`${PREFIX}-core`, function TestCore() {
 
     expect(await contract.getValue()).to.equal(4);
   });
+});
 
+describe(`${PREFIX}-event`, function TestEvent() {
   it.skip("Should filter an event", async function TestLogFetcher() {
     const { contract } = await loadFixture(useFixture);
 
@@ -44,8 +47,10 @@ describe(`${PREFIX}-core`, function TestCore() {
       console.log(topics);
     });
   });
+});
 
-  it.only("Should check actual gas used", async function TestGasUsed() {
+describe(`${PREFIX}-gas`, function TestGas() {
+  it.skip("Should check actual gas used", async function TestGasUsed() {
     const { contract } = await loadFixture(useFixture);
     const tx = await contract.setValue(100);
 
@@ -65,4 +70,30 @@ describe(`${PREFIX}-core`, function TestCore() {
   it.skip("Should return gas info for a block", async function TestGasInfoFetch() {
     await useOptismFetcher();
   });
+
+  it.only("Should init a raw transaction", async function TestRawTransaction() {
+    const { contract, owner } = await loadFixture(useFixture);
+
+    const box = contract as unknown as Box;
+    const param = 10;
+    const txMeta: TransactionRequest = {
+      from: owner.address,
+
+      //The maximum total fee to pay per gas. The actual value used is protocol enforced to be the block's base fee.
+      maxFeePerGas: ethers.formatUnits("3", "gwei"),
+    };
+
+    // @dev `populateTransaction`: validate all props for tx
+    const rawTx = await box.setValue.populateTransaction(param, txMeta);
+    console.log({ rawTx }); // from(owner), to(contract), data
+
+    const tx = await owner.sendTransaction(rawTx);
+    const receipt = await tx.wait(1);
+
+    if (receipt) {
+      console.log("tx status: ", receipt.status === 1 ? "success" : "failure");
+    }
+  });
 });
+
+describe(`${PREFIX}-assembly`, function TestAssembly() {});

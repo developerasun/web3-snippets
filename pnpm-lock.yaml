@@ -7,6 +7,12 @@ devDependencies:
   '@eth-optimism/fee-estimation':
     specifier: ^0.15.2
     version: 0.15.2(viem@0.3.50)
+  '@eth-optimism/sdk':
+    specifier: ^3.1.3
+    version: 3.1.3(ethers@6.7.1)
+  '@ethersproject/abstract-provider':
+    specifier: ^5.7.0
+    version: 5.7.0
   '@nomicfoundation/hardhat-chai-matchers':
     specifier: ^1.0.6
     version: 1.0.6(@nomiclabs/hardhat-ethers@2.2.3)(chai@4.3.8)(ethers@6.7.1)(hardhat@2.17.3)
@@ -207,6 +213,11 @@ packages:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
 
+  /@eth-optimism/contracts-bedrock@0.16.1:
+    resolution: {integrity: sha512-Y03JT7qw0AcWFNA6iK1XXTWSmCUqUFG19db5QezbJlaJnteKd1Za5Lg76omVOCUwytnbsSlU1yyNBXdav1cOzA==}
+    requiresBuild: true
+    dev: true
+
   /@eth-optimism/contracts-ts@0.15.0(typescript@5.2.2):
     resolution: {integrity: sha512-qga3xsj+NhnxjY96TWktKAmc2DSYrdy0E+lVkS3NZ/b5w898IisoMj/Xvv3KoovBJmnk+/ENNnMX7kk+fwQdtA==}
     peerDependencies:
@@ -229,12 +240,93 @@ packages:
       - zod
     dev: true
 
+  /@eth-optimism/contracts@0.6.0(ethers@6.7.1):
+    resolution: {integrity: sha512-vQ04wfG9kMf1Fwy3FEMqH2QZbgS0gldKhcBeBUPfO8zu68L61VI97UDXmsMQXzTsEAxK8HnokW3/gosl4/NW3w==}
+    peerDependencies:
+      ethers: ^5
+    dependencies:
+      '@eth-optimism/core-utils': 0.12.0
+      '@ethersproject/abstract-provider': 5.7.0
+      '@ethersproject/abstract-signer': 5.7.0
+      ethers: 6.7.1
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
+
+  /@eth-optimism/core-utils@0.12.0:
+    resolution: {integrity: sha512-qW+7LZYCz7i8dRa7SRlUKIo1VBU8lvN0HeXCxJR+z+xtMzMQpPds20XJNCMclszxYQHkXY00fOT6GvFw9ZL6nw==}
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/abstract-provider': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/hash': 5.7.0
+      '@ethersproject/keccak256': 5.7.0
+      '@ethersproject/properties': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@ethersproject/rlp': 5.7.0
+      '@ethersproject/transactions': 5.7.0
+      '@ethersproject/web': 5.7.1
+      bufio: 1.2.1
+      chai: 4.3.8
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
+
+  /@eth-optimism/core-utils@0.13.0:
+    resolution: {integrity: sha512-YmDJiQY9g4U811Y/InuX+FFKEYR8HXHgdJgVZ207Xkcj5s65G4LhKTt3tyQEPBPe7JN2seQF76efz/AOeZZgXA==}
+    requiresBuild: true
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/abstract-provider': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/keccak256': 5.7.0
+      '@ethersproject/properties': 5.7.0
+      '@ethersproject/rlp': 5.7.0
+      '@ethersproject/web': 5.7.1
+      chai: 4.3.8
+      ethers: 5.7.2
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: true
+
   /@eth-optimism/fee-estimation@0.15.2(viem@0.3.50):
     resolution: {integrity: sha512-HBNruwZcLdPwvrjS5GFYz7TvpAtNPgJSukSEXxUlC+K4FEt478jXR0hI+BWXQQw0d/IvZGNi1UmWMbcb/XgKKQ==}
     peerDependencies:
       viem: ^0.3.30
     dependencies:
       viem: 0.3.50(typescript@5.2.2)
+    dev: true
+
+  /@eth-optimism/sdk@3.1.3(ethers@6.7.1):
+    resolution: {integrity: sha512-eUneBmnmvForS+7AEXRb7Xz4cRr25oYQFlPZUplhEkXSFxgi7niPfy6noF2vfP2kZ7ycOKiXQ+1tAIAF0Z4SYQ==}
+    requiresBuild: true
+    peerDependencies:
+      ethers: ^5
+    dependencies:
+      '@eth-optimism/contracts': 0.6.0(ethers@6.7.1)
+      '@eth-optimism/contracts-bedrock': 0.16.1
+      '@eth-optimism/core-utils': 0.13.0
+      ethers: 6.7.1
+      lodash: 4.17.21
+      merkletreejs: 0.3.10
+      rlp: 2.2.7
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
     dev: true
 
   /@ethereumjs/common@2.5.0:
@@ -2136,6 +2228,10 @@ packages:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
     dev: true
 
+  /buffer-reverse@1.0.1:
+    resolution: {integrity: sha512-M87YIUBsZ6N924W57vDwT/aOu8hw7ZgdByz6ijksLjmHJELBASmYTTlNHRgjE+pTsT9oJXGaDSgqqwfdHotDUg==}
+    dev: true
+
   /buffer-to-arraybuffer@0.0.5:
     resolution: {integrity: sha512-3dthu5CYiVB1DEJp61FtApNnNndTckcqe4pFcLdvHtrpG+kcyekCJKg4MRiDcFW7A6AODnXB9U4dwQiCW5kzJQ==}
     dev: true
@@ -2164,6 +2260,11 @@ packages:
     requiresBuild: true
     dependencies:
       node-gyp-build: 4.6.1
+    dev: true
+
+  /bufio@1.2.1:
+    resolution: {integrity: sha512-9oR3zNdupcg/Ge2sSHQF3GX+kmvL/fTPvD0nd5AGLq8SjUYnTz+SlFjK/GXidndbZtIj+pVKXiWeR9w6e9wKCA==}
+    engines: {node: '>=14.0.0'}
     dev: true
 
   /busboy@1.6.0:
@@ -2670,6 +2771,10 @@ packages:
       public-encrypt: 4.0.3
       randombytes: 2.1.0
       randomfill: 1.0.4
+    dev: true
+
+  /crypto-js@3.3.0:
+    resolution: {integrity: sha512-DIT51nX0dCfKltpRiXV+/TVZq+Qq2NgF4644+K7Ttnla7zEzqc+kjJyiB96BHNyUTBxyjzRcZYpUdZa+QAqi6Q==}
     dev: true
 
   /csstype@3.1.2:
@@ -4873,6 +4978,17 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
+  /merkletreejs@0.3.10:
+    resolution: {integrity: sha512-lin42tKfRdkW+6iE5pjtQ9BnH+1Hk3sJ5Fn9hUUSjcXRcJbSISHgPCfYvMNEXiNqZPhz/TyRPEV30qgnujsQ7A==}
+    engines: {node: '>= 7.6.0'}
+    dependencies:
+      bignumber.js: 9.1.2
+      buffer-reverse: 1.0.1
+      crypto-js: 3.3.0
+      treeify: 1.1.0
+      web3-utils: 1.10.2
+    dev: true
+
   /methods@1.1.2:
     resolution: {integrity: sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==}
     engines: {node: '>= 0.6'}
@@ -6799,6 +6915,11 @@ packages:
 
   /tr46@0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
+    dev: true
+
+  /treeify@1.1.0:
+    resolution: {integrity: sha512-1m4RA7xVAJrSGrrXGs0L3YTwyvBs2S8PbRHaLZAkFw7JR8oIFwYtysxlBZhYIa7xSyiYJKZ3iGrrk55cGA3i9A==}
+    engines: {node: '>=0.6'}
     dev: true
 
   /ts-command-line-args@2.5.1:

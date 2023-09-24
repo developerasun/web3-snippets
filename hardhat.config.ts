@@ -31,6 +31,7 @@ const {
 
   API_ETHERSCAN_KEY,
   API_POLYGONSCAN_KEY,
+  API_OPT_ETHERSCAN_KEY,
   API_COINMARKETCAP,
 } = process.env;
 
@@ -102,6 +103,8 @@ const config: HardhatUserConfig = {
       sepolia: API_ETHERSCAN_KEY !== undefined ? API_ETHERSCAN_KEY : "",
       polygonMumbai:
         API_POLYGONSCAN_KEY !== undefined ? API_POLYGONSCAN_KEY : "",
+      optimisticGoerli:
+        API_OPT_ETHERSCAN_KEY !== undefined ? API_OPT_ETHERSCAN_KEY : "",
     },
   },
   typechain: {

@@ -3,7 +3,12 @@ import hre from "hardhat";
 import { Contract, Interface, InterfaceAbi, Mnemonic, Networkish, TransactionReceipt } from "ethers";
 import TEST_ABI from "../assets/abi/MyToken.polygonMumbai.json";
 
-const { ALCHEMY_KEY_MUMBAI, ALCHMEY_OPTIMISM_APK_KEY } = process.env;
+const {
+  ALCHEMY_KEY_MUMBAI,
+
+  ALCHMEY_OPTIMISM_GOE_API_KEY,
+  ALCHMEY_OPTIMISM_API_KEY,
+} = process.env;
 
 // ================================================================== //
 // =========================== common  ============================= //
@@ -21,7 +26,9 @@ export async function useDeployer(contractName: string) {
     const [deployer, recipient] = await ethers.getSigners();
 
     return { contract, deployer, recipient };
-  } else {
+  }
+
+  if (network === "polygonMumbai") {
     const targetNetwork = "maticmum";
     const targetAddr = contract.target as string;
 
@@ -29,6 +36,16 @@ export async function useDeployer(contractName: string) {
     await useVerifier(targetNetwork, targetAddr);
     return { contract };
   }
+
+  if (network === "optimisticGoerli") {
+    const targetNetwork = "optimism-goerli";
+    const targetAddr = contract.target as string;
+
+    await useWaitBlock(contract, targetNetwork, ALCHMEY_OPTIMISM_GOE_API_KEY!);
+    await useVerifier(targetNetwork, targetAddr);
+  }
+
+  return { contract };
 }
 
 export async function useWaitBlock(contract: Contract, network: Networkish, apiKey: string) {
@@ -141,7 +158,7 @@ export async function useOptismFetcher() {
   };
   const client = getL2Client(params);
 
-  const provider = new ethers.AlchemyProvider("optimism", ALCHMEY_OPTIMISM_APK_KEY);
+  const provider = new ethers.AlchemyProvider("optimism", ALCHMEY_OPTIMISM_API_KEY);
 
   const currentBlock = await provider.getBlock("latest");
 

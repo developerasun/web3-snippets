@@ -23,12 +23,9 @@
     "networks": "pnpm exec hardhat verify --list-networks",
     "abi:type": "pnpm typechain --target ethers-v6 --out-dir assets/abi './assets/abi/MyToken.polygonMumbai.json'",
     "tx:mum": "pnpm exec hardhat run scripts/run.ts --network polygonMumbai",
-    "tx:opt": "pnpm exec hardhat run scripts/run.ts --network optimisticEthereum",
-    "deploy:sep": "pnpm exec hardhat run scripts/deploy.ts --network sepolia",
+    "tx:goe": "pnpm exec hardhat run scripts/run.ts --network optimisticGoerli",
     "deploy:mum": "pnpm exec hardhat run scripts/deploy.ts --network polygonMumbai",
-    "deploy:eth": "pnpm exec hardhat run scripts/deploy.ts --network ethereum",
-    "deploy:goe": "pnpm exec hardhat run scripts/deploy.ts --network goerli",
-    "deploy:pol": "pnpm exec hardhat run scripts/deploy.ts --network polygon",
+    "deploy:goe": "pnpm exec hardhat run scripts/deploy.ts --network optimisticGoerli",
     "verify:mum": "node verify.cjs"
   },
   "devDependencies": {

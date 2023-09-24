@@ -21,6 +21,7 @@ const {
   ALCHEMY_HTTPS_SEPOLIA,
   ALCHEMY_HTTPS_MUMBAI,
   ALCHEMY_HTTPS_OPTIMISM,
+  ALCHEMY_HTTPS_OPT_GOERLI,
 
   ALCHEMY_KEY_GOERLI,
   ALCHEMY_HTTPS_GOERLI,
@@ -67,6 +68,11 @@ const config: HardhatUserConfig = {
   networks: {
     optimisticEthereum: {
       url: ALCHEMY_HTTPS_OPTIMISM !== undefined ? ALCHEMY_HTTPS_OPTIMISM : "",
+      accounts: ACCOUNT_PRIVATE_KEY !== undefined ? [ACCOUNT_PRIVATE_KEY] : [],
+    },
+    optimisticGoerli: {
+      url:
+        ALCHEMY_HTTPS_OPT_GOERLI !== undefined ? ALCHEMY_HTTPS_OPT_GOERLI : "",
       accounts: ACCOUNT_PRIVATE_KEY !== undefined ? [ACCOUNT_PRIVATE_KEY] : [],
     },
     goerli: {

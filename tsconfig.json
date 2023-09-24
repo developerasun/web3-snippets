@@ -16,6 +16,9 @@
       "@scripts/*": [
         "./scripts/*"
       ],
+      "@assets/*": [
+        "./assets/*"
+      ],
     }
   },
   "include": [

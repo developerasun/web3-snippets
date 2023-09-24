@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import hre from "hardhat";
-import { Contract, Interface, InterfaceAbi, Mnemonic, TransactionReceipt } from "ethers";
+import { Contract, Interface, InterfaceAbi, Mnemonic, Networkish, TransactionReceipt } from "ethers";
 import TEST_ABI from "../assets/abi/MyToken.polygonMumbai.json";
 
 const { ALCHEMY_KEY_MUMBAI, ALCHMEY_OPTIMISM_APK_KEY } = process.env;
@@ -12,22 +12,40 @@ export async function useDeployer(contractName: string) {
   const contract = await ethers.deployContract(contractName);
   await contract.waitForDeployment();
 
-  const [deployer, recipient] = await ethers.getSigners();
-
   console.log("deployed to: ", contract.target);
 
-  return { contract, deployer, recipient };
+  const network = hre.network.name;
+
+  // guard for transaction underpriced when network is not hardhat
+  if (network === "hardhat") {
+    const [deployer, recipient] = await ethers.getSigners();
+
+    return { contract, deployer, recipient };
+  } else {
+    const targetNetwork = "maticmum";
+    const targetAddr = contract.target as string;
+
+    await useWaitBlock(contract, targetNetwork, ALCHEMY_KEY_MUMBAI);
+    await useVerifier(targetNetwork, targetAddr);
+    return { contract };
+  }
 }
 
-export async function useWaitBlock(contract: Contract) {
-  const receipt = await contract.deploymentTransaction()?.wait(6);
-
-  if (receipt !== undefined) {
-    let message = "";
-
-    receipt?.status === 1 ? (message = "33") : (message = "99");
-    console.log({ message });
+export async function useWaitBlock(contract: Contract, network: Networkish, apiKey: string) {
+  function blockListener(block: number) {
+    console.log(`Waited for block to produce: ${block}`);
   }
+
+  const provider = new ethers.AlchemyProvider(network, apiKey);
+
+  await provider.on("block", blockListener);
+
+  const targetWaitNumber = 6;
+  await contract.deploymentTransaction()?.wait(targetWaitNumber);
+
+  console.log(`waited ${targetWaitNumber} blocks for confirmation`);
+
+  await provider.removeListener("block", blockListener);
 }
 
 export async function useGasPrice() {
@@ -38,10 +56,10 @@ export async function useGasPrice() {
   const _maxFeePerGas = maxFeePerGas?.toString() ?? "0";
   const _maxPriorityFeePerGas = maxPriorityFeePerGas?.toString() ?? "0";
 
-  const userFee = ethers.formatUnits(_maxFeePerGas!, "gwei");
+  const estimatedBaseFee = ethers.formatUnits(_maxFeePerGas!, "gwei");
   const blockProducerTip = ethers.formatUnits(_maxPriorityFeePerGas!, "gwei");
 
-  return { userFee, blockProducerTip };
+  return { estimatedBaseFee, blockProducerTip };
 }
 
 export async function useVerifier(network: string, target: string, args?: any[]) {

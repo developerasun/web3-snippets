@@ -3,7 +3,7 @@ module github.com/developerasun/web3-snippets
 go 1.20
 
 require (
-	github.com/gruntwork-io/terratest v0.43.13
+	github.com/gruntwork-io/terratest v0.44.0
 	github.com/stretchr/testify v1.8.4
 )
 

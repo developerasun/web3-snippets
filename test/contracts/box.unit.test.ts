@@ -104,7 +104,7 @@ describe(`${PREFIX}-gas`, function TestGas() {
     }
   });
 
-  it.only("Should estimate gas for L2 tx", async function TestL2Gas() {
+  it.skip("Should estimate gas for L2 tx", async function TestL2Gas() {
     const { contract } = await loadFixture(useFixture);
     const [owner] = await ethers.getSigners();
 
@@ -153,5 +153,59 @@ describe(`${PREFIX}-assembly`, function TestAssembly() {
   it.skip("Should add two values", async function TestAdd() {
     const { contract } = await loadFixture(useFixture);
     expect(await contract.addTwoValues(3, 99)).to.equal(102);
+  });
+
+  it.skip("Should return state enum", async function TestStateEnum() {
+    const { contract } = await loadFixture(useFixture);
+    expect(await contract.getStateEnum()).to.equal(2);
+  });
+
+  it.skip("Should set a new value with assembly", async function TestAssemblySetter() {
+    const { contract } = await loadFixture(useFixture);
+    expect(await contract.value()).to.equal(99);
+
+    await contract.setValueWithAssembly(999);
+
+    expect(await contract.value()).to.equal(999);
+  });
+
+  it.skip("Should get a value with assembly", async function TestAssemblyGetter() {
+    const { contract } = await loadFixture(useFixture);
+    expect(await contract.getValueWithAssembly()).to.equal(99);
+  });
+
+  it.skip("Should get storage vars by slot number", async function TestSlotIndex() {
+    const { contract } = await loadFixture(useFixture);
+    expect(await contract.getStorageBySlot(0)).to.equal(99);
+    expect(await contract.getStorageBySlot(1)).to.equal(10);
+    expect(await contract.getStorageBySlot(2)).to.equal(2);
+
+    console.log(await contract.getStorageBySlot(3));
+    console.log(await contract.getStorageBySlot(4)); // last slot
+    console.log(await contract.getStorageBySlot(5));
+    console.log(await contract.getStorageBySlot(6));
+    console.log(await contract.getStorageBySlot(7));
+  });
+
+  it.only("Should hash with assembly", async function TestAssemblyHash() {
+    const { contract } = await loadFixture(useFixture);
+    const expected = ethers.solidityPackedKeccak256(["uint", "uint"], [3, 9]);
+    expect(await contract.hash(3, 9)).to.equal(expected);
+  });
+
+  // todo
+  it.skip("Should allocate and return with free pointer memory", async function TestFreePointer() {
+    const { contract } = await loadFixture(useFixture);
+    // console.log(await contract.allocateAndReturn(44, 6));
+    expect(await contract.allocateAndReturn(44)).to.equal(44);
+  });
+});
+
+describe(`${PREFIX}-storage-pointer`, async function TestStoragePointer() {
+  it.skip("Should update storage variable with pointer", async function TestPointerUpdate() {
+    const { contract } = await loadFixture(useFixture);
+    await contract.getMapPointerForUpdate();
+
+    expect((await contract.myMap())[2]).to.equal(BigInt(300));
   });
 });

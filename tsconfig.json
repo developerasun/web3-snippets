@@ -25,6 +25,7 @@
     "./hardhat.config.ts",
     "./scripts",
     "./test/contracts",
+    "./test/_default",
     "./assets/types",
   ],
   "files": [

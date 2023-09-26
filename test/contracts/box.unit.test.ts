@@ -199,6 +199,11 @@ describe(`${PREFIX}-assembly`, function TestAssembly() {
     // console.log(await contract.allocateAndReturn(44, 6));
     expect(await contract.allocateAndReturn(44)).to.equal(44);
   });
+
+  it.only("Should return hex to integer", async function TestGetHex() {
+    const { contract } = await loadFixture(useFixture);
+    expect(await contract.getHex()).to.equal(10); // 0xa is 10 in decimals
+  });
 });
 
 describe(`${PREFIX}-storage-pointer`, async function TestStoragePointer() {

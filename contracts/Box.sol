@@ -115,4 +115,10 @@ contract Box {
             return (0x00, 0x20)
         }
     }
+
+    function getHex() public pure returns(uint256 result) {
+        assembly {
+            result := 0xa
+        }
+    }
 }

@@ -6,6 +6,8 @@ contract Box {
     uint256 public value = 99; // slot 0
     uint256 public directValue = 10; // slot 1
 
+    string public name = "none";
+
     enum State {
         PENDING, 
         SUCCESS,
@@ -29,6 +31,10 @@ contract Box {
         value = _value;
         
         emit ValueChanged(_value);
+    }
+
+    function setName(string memory newName) public {
+        name = newName;
     }
 
     function getMapPointerForUpdate() public {

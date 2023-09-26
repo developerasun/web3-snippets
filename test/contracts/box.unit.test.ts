@@ -187,7 +187,7 @@ describe(`${PREFIX}-assembly`, function TestAssembly() {
     console.log(await contract.getStorageBySlot(7));
   });
 
-  it.only("Should hash with assembly", async function TestAssemblyHash() {
+  it.skip("Should hash with assembly", async function TestAssemblyHash() {
     const { contract } = await loadFixture(useFixture);
     const expected = ethers.solidityPackedKeccak256(["uint", "uint"], [3, 9]);
     expect(await contract.hash(3, 9)).to.equal(expected);

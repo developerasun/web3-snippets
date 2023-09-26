@@ -5,13 +5,15 @@ import { HARDHAT_CONFIG_HELPER } from "./scripts/constants";
 // core plugins
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-chai-matchers";
-import "@nomicfoundation/hardhat-ethers";
-import "@nomiclabs/hardhat-solhint";
+// import "@nomicfoundation/hardhat-ethers";
+// import "@nomicfoundation/hardhat-verify";
+
 import "@typechain/hardhat";
 import "tsconfig-paths/register";
 
 // community plugins
 import "hardhat-contract-sizer";
+import "hardhat-gas-reporter";
 import "hardhat-log-remover";
 import "solidity-docgen";
 

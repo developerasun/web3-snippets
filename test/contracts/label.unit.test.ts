@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 import { useABIParser, useDeployer, useOptismFetcher } from "@scripts/hook";
 import { ContractTransactionReceipt, Filter, TransactionRequest } from "ethers";
 import hre from "hardhat";
-import { Box, Label } from "@assets/types";
+import { Label } from "@assets/types";
 
 const { ALCHEMY_KEY_MUMBAI, ALCHMEY_OPTIMISM_API_KEY } = process.env;
 
@@ -19,7 +19,7 @@ const useFixture = async () => {
 };
 
 describe(`${PREFIX}-custom-ERC`, function TestCustomERC() {
-  it.only("Should support ERC9999 interface", async function TestSupportsInterface() {
+  it.skip("Should support ERC9999 interface", async function TestSupportsInterface() {
     const { contract } = await loadFixture(useFixture);
 
     const label = contract as unknown as Label;

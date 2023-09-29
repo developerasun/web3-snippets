@@ -3,6 +3,7 @@ import hre from "hardhat";
 import { Contract, Interface, InterfaceAbi, Mnemonic, Networkish, TransactionReceipt } from "ethers";
 import TEST_ABI from "../assets/abi/MyToken.polygonMumbai.json";
 
+
 const {
   ALCHEMY_KEY_MUMBAI,
 
@@ -145,6 +146,14 @@ export async function useEventParser(abi: Interface | InterfaceAbi) {
   });
 
   return { eventMap };
+}
+
+export async function useLogger() {
+  const {consola} = await import("consola")
+
+  const logger = consola
+
+  return logger
 }
 
 // ================================================================== //

@@ -1,10 +1,13 @@
 import { ethers } from "hardhat";
-import { useEventParser, useGasPrice } from "@scripts/hook.js";
+import {  useEventParser, useGasPrice, useLogger } from "@scripts/hook";
 
 async function _main() {
-  // useEventParser();
-  const { userFee, blockProducerTip } = await useGasPrice();
-  console.log({ userFee: userFee + "gwei", blockProducerTip: blockProducerTip + "gwei" });
+  const logger = await useLogger()
+  logger.box("here comes the box, bitch")
+  logger.info("big news here, fam")
+  logger.error("something went wrong")
+  logger.success("done, bitch")
+  logger.warn("smell suspicious")
 }
 
 _main().catch((error) => {

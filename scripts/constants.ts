@@ -6,6 +6,10 @@ export const INTERFACE_ID = {
   erc1155: "0xd9b67a26",
 } as const;
 
+const CONTRACT_HELPER = {
+  maxSize: 24 // 24kb, EVM
+} as const
+
 const HASH_HELPER = {
   erc9999: {
     domain: {

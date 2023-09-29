@@ -40,7 +40,7 @@ const {
 const options = {
   settings: {
     optimizer: {
-      enabled: HARDHAT_CONFIG_HELPER.compiler.enable,
+      enabled: false,
       runs: HARDHAT_CONFIG_HELPER.compiler.fee.lowDeployment,
     },
     // enable smock plugin mocking

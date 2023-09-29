@@ -23,6 +23,9 @@ export async function useDeployer(contractName: string) {
 
   // guard for transaction underpriced when network is not hardhat
   if (network === "hardhat") {
+    // @ts-ignore
+    await hre.storageLayout.export()
+    
     const [deployer, recipient] = await ethers.getSigners();
 
     return { contract, deployer, recipient };

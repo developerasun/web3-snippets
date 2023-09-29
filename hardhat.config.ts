@@ -16,6 +16,7 @@ import "hardhat-contract-sizer";
 import "hardhat-gas-reporter";
 import "hardhat-log-remover";
 import "solidity-docgen";
+import "hardhat-storage-layout"
 
 dotenv.config({ path: "./.dev.env" });
 

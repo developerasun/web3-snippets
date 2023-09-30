@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import hre from "hardhat";
 import { Contract, Interface, InterfaceAbi, Mnemonic, Networkish, TransactionReceipt } from "ethers";
 import TEST_ABI from "../assets/abi/MyToken.polygonMumbai.json";
-
+import { JobCallback, RecurrenceRule, scheduleJob, gracefulShutdown } from 'node-schedule'
 
 const {
   ALCHEMY_KEY_MUMBAI,
@@ -154,6 +154,32 @@ export async function useLogger() {
   const logger = consola
 
   return logger
+}
+
+// @dev cron job can't be used for second-based jobs. use shell script for it instead
+export function useCron(schedule: string, callback: JobCallback) {
+  const job = scheduleJob(schedule, callback)
+}
+
+export async function useInterval(callback: TimerHandler, timeout: number, clear: number): Promise<{done: Boolean}> {
+  console.log(`running scheduled jobs for ${timeout} milliseconds`)
+
+  const intervalId = setInterval(callback, timeout)
+
+  let done = false
+
+  const timeoutId = setTimeout(() => {
+    console.log(`terminating interval with id ${intervalId} after ${clear} milliseconds`)
+    clearInterval(intervalId)
+    console.log(`terminating timeout with id ${timeoutId}`)
+  }, clear);
+
+  return new Promise((resolve) => {
+    done = true
+    setTimeout(() => {
+      resolve({done})
+    }, clear + 1000);
+  })
 }
 
 // ================================================================== //

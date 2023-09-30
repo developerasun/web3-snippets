@@ -26,6 +26,7 @@
     "./scripts",
     "./test/contracts",
     "./test/_default",
+    "./test/hook",
     "./assets/types",
   ],
   "files": [

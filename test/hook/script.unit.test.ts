@@ -1,4 +1,4 @@
-import { useCron, useInterval } from '@scripts/hook';
+import { logger, useCron, useInterval } from '@scripts/hook';
 import { expect } from 'chai';
 
 const PREFIX="scripts"
@@ -8,7 +8,7 @@ describe(`${PREFIX}-utility-hooks`, function TestHookFunctions() {
         const callback = () => console.log("check")
         const everyOneMinute = "*/1 * * * *" 
         useCron(everyOneMinute, callback)
-    })
+    }) 
 
     it.only("Should execute cron jobs by 2 secs", async function TestInterval() {
         const handler = () => console.log("now: ", Date.now())

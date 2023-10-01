@@ -3,6 +3,7 @@ import hre from "hardhat";
 import { Contract, Interface, InterfaceAbi, Mnemonic, Networkish, TransactionReceipt } from "ethers";
 import TEST_ABI from "../assets/abi/MyToken.polygonMumbai.json";
 import { JobCallback, RecurrenceRule, scheduleJob, gracefulShutdown } from 'node-schedule'
+import pino from 'pino'
 
 const {
   ALCHEMY_KEY_MUMBAI,
@@ -11,6 +12,14 @@ const {
   ALCHMEY_OPTIMISM_API_KEY,
 } = process.env;
 
+export const logger = pino({
+  transport: {
+    target: 'pino-pretty',
+    options: {
+      colorize: true
+    }
+  },
+})
 // ================================================================== //
 // =========================== common  ============================= //
 // ================================================================== //
@@ -18,7 +27,7 @@ export async function useDeployer(contractName: string) {
   const contract = await ethers.deployContract(contractName);
   await contract.waitForDeployment();
 
-  console.log("deployed to: ", contract.target);
+  logger.info("deployed to: ", contract.target);
 
   const network = hre.network.name;
 
@@ -54,7 +63,7 @@ export async function useDeployer(contractName: string) {
 
 export async function useWaitBlock(contract: Contract, network: Networkish, apiKey: string) {
   function blockListener(block: number) {
-    console.log(`Waited for block to produce: ${block}`);
+    logger.debug(`Waited for block to produce: ${block}`);
   }
 
   const provider = new ethers.AlchemyProvider(network, apiKey);
@@ -64,7 +73,7 @@ export async function useWaitBlock(contract: Contract, network: Networkish, apiK
   const targetWaitNumber = 6;
   await contract.deploymentTransaction()?.wait(targetWaitNumber);
 
-  console.log(`waited ${targetWaitNumber} blocks for confirmation`);
+  logger.debug(`waited ${targetWaitNumber} blocks for confirmation`);
 
   await provider.removeListener("block", blockListener);
 }
@@ -85,7 +94,7 @@ export async function useGasPrice() {
 
 export async function useVerifier(network: string, target: string, args?: any[]) {
   if (network === "hardhat") {
-    console.log("Invalid network target for verification");
+    logger.debug("Invalid network target for verification");
     process.exit(1);
   }
   await hre.run("verify:verify", {
@@ -127,7 +136,7 @@ export async function useErrorParser(error: any) {
   const textified = JSON.parse(JSON.stringify(error));
   const responseBody = JSON.parse(textified.error.error.body);
 
-  console.log(
+  logger.info(
     `
     top level debug info:
       code: ${code}
@@ -148,30 +157,22 @@ export async function useEventParser(abi: Interface | InterfaceAbi) {
   return { eventMap };
 }
 
-export async function useLogger() {
-  const {consola} = await import("consola")
-
-  const logger = consola
-
-  return logger
-}
-
 // @dev cron job can't be used for second-based jobs. use shell script for it instead
 export function useCron(schedule: string, callback: JobCallback) {
   const job = scheduleJob(schedule, callback)
 }
 
 export async function useInterval(callback: TimerHandler, timeout: number, clear: number): Promise<{done: Boolean}> {
-  console.log(`running scheduled jobs for ${timeout} milliseconds`)
+  logger.debug(`running scheduled jobs for ${timeout} milliseconds`)
 
   const intervalId = setInterval(callback, timeout)
 
   let done = false
 
   const timeoutId = setTimeout(() => {
-    console.log(`terminating interval with id ${intervalId} after ${clear} milliseconds`)
+    logger.debug(`terminating interval with id ${intervalId} after ${clear} milliseconds`)
     clearInterval(intervalId)
-    console.log(`terminating timeout with id ${timeoutId}`)
+    logger.info(`terminating timeout with id ${timeoutId}`)
   }, clear);
 
   return new Promise((resolve) => {
@@ -210,10 +211,10 @@ export async function useOptismFetcher() {
     const currentGasPrice = ethers.formatUnits(_gasPrice.toString(), "gwei");
     const currentBlockNumber = number;
 
-    console.log({ currentBaseFee });
-    console.log({ currentGasPrice });
-    console.log({ currentBlockNumber });
-    console.log({ gasLimit });
+    logger.info({ currentBaseFee });
+    logger.info({ currentGasPrice });
+    logger.info({ currentBlockNumber });
+    logger.info({ gasLimit });
   }
 }
 
@@ -233,5 +234,5 @@ export async function useOptismFetcher() {
 //     to: "0x2335022c740d17c2837f9C884Bfe4fFdbf0A95D5",
 //   });
 
-//   console.log({ fees });
+//   logger.info({ fees });
 // }

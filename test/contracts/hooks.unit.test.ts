@@ -1,16 +1,16 @@
-import { logger, useCron, useInterval } from '@scripts/hook';
+import { logger, useCron, useInterval, useTerm } from '@scripts/hook';
 import { expect } from 'chai';
 
-const PREFIX="scripts"
+const PREFIX="hooks"
 
 describe(`${PREFIX}-utility-hooks`, function TestHookFunctions() {
     it.skip("Should execute cron jobs every 1 mins", async function TestCron() {
         const callback = () => console.log("check")
         const everyOneMinute = "*/1 * * * *" 
         useCron(everyOneMinute, callback)
-    }) 
-
-    it.only("Should execute cron jobs by 2 secs", async function TestInterval() {
+    })   
+  
+    it.skip("Should execute cron jobs by 2 secs", async function TestInterval() {
         const handler = () => console.log("now: ", Date.now())
         const params = {
             timeout: 2000, 
@@ -20,5 +20,16 @@ describe(`${PREFIX}-utility-hooks`, function TestHookFunctions() {
         const {done} = await useInterval(handler, params.timeout, params.clear)
         
         expect(done).to.be.true
+    }) 
+
+    it.skip("Should log when terminal ended", function TestSignalHangUp() {
+        useTerm()
+
+        setTimeout(function() {
+            console.log('Exiting.');
+            // process.exit(0);
+            process.kill(process.pid, 'SIGINT'); // on windows, use SIGINT instead of SIGHUP
+          }, 3000);
     })
+
 })

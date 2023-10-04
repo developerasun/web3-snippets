@@ -3,8 +3,12 @@ import { expect } from "chai";
 import express from "express";
 import { ethers } from "hardhat";
 import request from "supertest";
+import bodyParser from 'body-parser'
 
 const app = express();
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded())
+
 
 app.post("/receive", (req, res) => {
   let decoded: string = "";
@@ -23,6 +27,15 @@ app.post("/receive", (req, res) => {
     res.status(201).json({ data: _data });
   });
 });
+
+app.post("/check", (req, res) => {
+
+  console.log("params: ", req.params)
+  console.log("query: ", req.query)
+  console.log("body: ", req.body)
+  
+  return res.status(200)
+})
 
 const appName = "plain-server";
 const PREFIX = `integ-${appName}`;
@@ -76,4 +89,17 @@ describe(`${PREFIX}-Should test app for integration`, function TestIntegration()
 
     expect(await contract.name()).to.equal(expectedName);
   });
+
+  it.only("Should return 200", async function TestOkResponse() {
+    request(app)
+      .post("/check")
+      .send({ name: "super jake"})
+      .expect(200)
+      .end(
+        (err, res) => {
+          if (err) console.log(err)
+          if (res) console.log(res)
+        }
+      )
+  })
 });

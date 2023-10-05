@@ -1,8 +1,10 @@
 import {describe, expect, test, jest} from '@jest/globals';
 import axios from 'axios'
+import { mocked } from 'jest-mock'
+
 
 jest.mock('axios')
-
+const _mAxios = mocked(axios)
 const mAxios = axios as jest.Mocked<typeof axios>
 
 describe('Jest mock test', function TestJest() {
@@ -22,5 +24,15 @@ describe('Jest mock test', function TestJest() {
         const resp = await mAxios.get('https://jsonplaceholder.typicode.com/todos/1')
         
         expect(resp).toEqual(shouldBe)
+    })
+
+    test.only("Should mock without typecasting", async function TestNoTypeMock() {
+        const shouldBe = {
+            who: 'jake'
+        }
+
+        _mAxios.get.mockResolvedValue(shouldBe)
+        const resolved = await _mAxios.get("https://jsonplaceholder.typicode.com/todos/1")
+        expect(resolved).toEqual(shouldBe)
     })
 });

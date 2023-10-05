@@ -53,6 +53,7 @@
     "@types/node-schedule": "^2.1.1",
     "@types/supertest": "^2.0.13",
     "alchemy-sdk": "^2.10.1",
+    "axios": "^1.5.1",
     "body-parser": "^1.20.2",
     "chai": "^4.3.8",
     "chalk": "4.1.2",

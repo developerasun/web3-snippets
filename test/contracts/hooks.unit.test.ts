@@ -32,4 +32,44 @@ describe(`${PREFIX}-utility-hooks`, function TestHookFunctions() {
           }, 3000);
     })
 
+    it.skip("should log in two seconds", function TestLogInTwoSeconds() {
+        setTimeout(() => {
+            console.log("Wefwef")
+        }, 2000);
+    })
+
+    it.only("Should check promise orders", async function TestPromiseOrder() {
+        let success: number[] = []
+
+        let retryAt: number = 999
+
+        async function pLog(index: number) {
+            return await new Promise((resolve, reject) => {
+                console.log(index)
+
+                if (index !== 8) { // escape at index 8
+                    success.push(index)
+                    resolve(true)
+                } else {
+                    reject(false)
+                }
+            })
+        }
+
+        try {
+            for (let index = 0; index < 10; index++) {
+                await pLog(index) // sequential execution 
+            }
+        } catch (error) {
+            console.error(error)
+        } finally {
+            console.log("done")
+            console.log(success)
+            console.log("success till index: ", success.length-1)
+            console.log("Failed at index: ", success.length)
+            retryAt = success.length
+        }
+
+        console.log("next promise execution index at: ", retryAt)
+    })
 })

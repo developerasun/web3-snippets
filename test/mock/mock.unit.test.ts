@@ -1,5 +1,5 @@
 import {describe, expect, test, jest, afterEach} from '@jest/globals';
-import axios from 'axios'
+import axios, { Axios, AxiosError} from 'axios'
 import { mocked } from 'jest-mock'
 
 jest.useFakeTimers()
@@ -53,7 +53,7 @@ describe('Jest mock test', function TestJest() {
         expect(_mAxios.get).toHaveBeenCalledWith("https://jsonplaceholder.typicode.com/todos/1")
     })
 
-    test.only("Should use fake timer", async function TestJestTimer() {
+    test.skip("Should use fake timer", async function TestJestTimer() {
         const logInLog = (cb: () => void) => {
             console.log("log right away")
 
@@ -71,5 +71,44 @@ describe('Jest mock test', function TestJest() {
         jest.advanceTimersByTime(2000)
 
         expect(callback).toBeCalledTimes(1)
+    })
+
+    test.only("Should set timeout for axios", async function TestTimeout() {
+        // mAxios.get.mockRejectedValue(new mAxios.AxiosError("timeout error"))
+        mAxios.get.mockImplementation((url, config) => {
+            return new Promise((resolve, reject) => {
+                console.log("being rejected")
+                setTimeout(() => {
+                    reject(new mAxios.AxiosError("timeout error"))
+                }, 5000);
+            })
+        })
+
+        function runAxios(cb: () => void) {
+            setTimeout(async () => {
+                cb && cb()
+            }, 5000);
+        }
+
+        const callback = jest.fn(() => {
+            mAxios.get("https://jsonplaceholder.typicode.com/todos/1", { timeout: 5000 }).then((res) => {
+                console.log(res)
+            }).catch((error: unknown) => {
+                if (error instanceof mAxios.AxiosError) {
+                    console.log("is axios error")
+                    console.log(error.message) // axios module stub and return undefined 
+                } else { 
+                    console.log(error)
+                }
+            })
+        })
+
+        runAxios(callback)
+
+        expect(callback).not.toHaveBeenCalled()
+
+        jest.advanceTimersByTime(5000)
+
+        expect(callback).toHaveBeenCalledTimes(1)
     })
 });

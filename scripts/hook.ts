@@ -183,9 +183,17 @@ export async function useInterval(callback: TimerHandler, timeout: number, clear
   })
 }
 
+export function useEpochTime() {
+  return {
+    utc: Math.floor(new Date().getTime()/1000.0), // The getTime method returns the time in milliseconds.
+    local: new Date().toLocaleString()
+  } 
+}
+
 // ================================================================== //
 // =========================== L2 hooks ============================= //
 // ================================================================== //
+
 export async function useOptismFetcher() {
   const sdk = await import("@eth-optimism/fee-estimation");
 

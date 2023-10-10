@@ -1,4 +1,4 @@
-import { logger, useCron, useInterval, useTerm } from '@scripts/hook';
+import { logger, useCron, useEpochTime, useInterval } from '@scripts/hook';
 import { expect } from 'chai';
 
 const PREFIX="hooks"
@@ -22,23 +22,13 @@ describe(`${PREFIX}-utility-hooks`, function TestHookFunctions() {
         expect(done).to.be.true
     }) 
 
-    it.skip("Should log when terminal ended", function TestSignalHangUp() {
-        useTerm()
-
-        setTimeout(function() {
-            console.log('Exiting.');
-            // process.exit(0);
-            process.kill(process.pid, 'SIGINT'); // on windows, use SIGINT instead of SIGHUP
-          }, 3000);
-    })
-
     it.skip("should log in two seconds", function TestLogInTwoSeconds() {
         setTimeout(() => {
             console.log("Wefwef")
         }, 2000);
     })
 
-    it.only("Should check promise orders", async function TestPromiseOrder() {
+    it.skip("Should check promise orders", async function TestPromiseOrder() {
         let success: number[] = []
 
         let retryAt: number = 999
@@ -55,21 +45,28 @@ describe(`${PREFIX}-utility-hooks`, function TestHookFunctions() {
                 }
             })
         }
-
+ 
         try {
             for (let index = 0; index < 10; index++) {
                 await pLog(index) // sequential execution 
-            }
-        } catch (error) {
+            }  
+        } catch (error) {   
             console.error(error)
-        } finally {
+        } finally {   
             console.log("done")
             console.log(success)
             console.log("success till index: ", success.length-1)
             console.log("Failed at index: ", success.length)
             retryAt = success.length
-        }
+        } 
 
         console.log("next promise execution index at: ", retryAt)
+    })
+
+    it.only("Should log epoch time in seconds", function TestEpochTime() {
+        const {utc, local} = useEpochTime()
+
+        console.log({utc})
+        console.log({local})
     })
 })

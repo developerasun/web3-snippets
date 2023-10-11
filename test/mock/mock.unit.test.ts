@@ -150,6 +150,20 @@ describe('Jest mock test', function TestJest() {
 
         await expect(receiveValue(2000)).rejects.toEqual(false)
     })
+
+    test.only("Should guard property", function TestObjectProp() {
+        const myObject = {
+            createdAt: 111,
+            length: 9,
+            id: 44
+        }
+
+        const propGuard = (target: Object, key: string ) => target.hasOwnProperty(key) 
+       expect(propGuard(myObject, 'id')).toBeTruthy()
+       expect(propGuard(myObject, 'length')).toBeTruthy()
+       expect(propGuard(myObject, 'date')).toBeFalsy()
+        
+    })
 });
 
 

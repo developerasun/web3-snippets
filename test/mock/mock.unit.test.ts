@@ -1,6 +1,28 @@
 import {describe, expect, test, jest, afterEach} from '@jest/globals';
 import axios, { Axios, AxiosError} from 'axios'
 import { mocked } from 'jest-mock'
+import { SnapshotRestorer, loadFixture, takeSnapshot } from "@nomicfoundation/hardhat-network-helpers";
+import { ethers } from "hardhat"
+import { useABIParser, useDeployer, useOptismFetcher } from "../../scripts/hook"
+import { ContractRunner, ContractTransactionReceipt, Filter, TransactionRequest } from "ethers";
+import hre from "hardhat";
+import { Assembly } from "../../assets/types";
+import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
+
+const { ALCHEMY_KEY_MUMBAI, ALCHMEY_OPTIMISM_API_KEY } = process.env;
+
+const contractName = "Assembly";
+const PREFIX = `unit-${contractName}`;
+
+const useFixture = async () => {
+  const _contract = (await useDeployer(contractName)).contract;
+  const [owner, recipient] = await ethers.getSigners();
+  const contract = _contract as unknown as Assembly
+
+  return { contract, owner, recipient };
+};
+
+
 
 jest.useFakeTimers()
 jest.mock('axios')
@@ -73,7 +95,7 @@ describe('Jest mock test', function TestJest() {
         expect(callback).toBeCalledTimes(1)
     })
 
-    test.only("Should set timeout for axios", async function TestTimeout() {
+    test.skip("Should set timeout for axios", async function TestTimeout() {
         // mAxios.get.mockRejectedValue(new mAxios.AxiosError("timeout error"))
         mAxios.get.mockImplementation((url, config) => {
             return new Promise((resolve, reject) => {
@@ -111,4 +133,23 @@ describe('Jest mock test', function TestJest() {
 
         expect(callback).toHaveBeenCalledTimes(1)
     })
+
+    test.only("Should mock a Promise return", async function TestPromiseMock() {
+        const getValue = jest.fn(() => new Promise((resolve) => {
+            resolve(99)
+        }))
+        
+        expect(await getValue()).toEqual(99)
+
+        const receiveValue = jest.fn((value: number) => {
+            return new Promise((resolve, reject) => {
+                if (value < 100) resolve(true)
+                if (value >= 100) reject(false)
+            })
+        })
+
+        await expect(receiveValue(2000)).rejects.toEqual(false)
+    })
 });
+
+

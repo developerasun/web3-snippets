@@ -297,7 +297,7 @@ describe(`${PREFIX}-alchemy-hook`, function TestAlchemyHook() {
   let alchemy: Alchemy
 
   const settings = {
-    apiKey: ALCHEMY_WSS_OPT_GOERLI,
+    apiKey: ALCHMEY_OPTIMISM_GOE_API_KEY,
     network: Network.OPT_GOERLI
   }
 
@@ -338,17 +338,8 @@ describe(`${PREFIX}-alchemy-hook`, function TestAlchemyHook() {
     // console.log("executed hash: ", receipt?.hash)
   })
 
-  it.only("Should fetch pending tx", async function TestGetPendingTx() {
-    // const provider = new ethers.WebSocketProvider(ALCHEMY_WSS_OPT_GOERLI!, 'optimism-goerli')
-
-    // provider.on("block", (b)=>{
-    //   console.log(b)
-    // })
-
-    // provider.on("pending", (h) => {
-    //   console.log(h)
-    // })
-
+  // todo
+  it.skip("Should fetch pending tx", async function TestGetPendingTx() {
     const latest = await alchemy.core.getBlock("latest")
 
     let blockHash = ''
@@ -372,7 +363,20 @@ describe(`${PREFIX}-alchemy-hook`, function TestAlchemyHook() {
         }
       })
     }
-    
+  })
+
+  it.only("Should inspect latest block for tx hash", async function TestSearchBlock() {
+    const latest = await alchemy.core.getBlock("latest")
+    console.log("latest: ",latest.hash)
+    const response = await alchemy.core.getTransactionReceipts({ blockHash: latest.hash })
+
+    const { receipts } = response
+
+    if (receipts) {
+      receipts.forEach((receipt) => {
+        console.log(receipt.transactionHash)
+      })
+    }
   })
   
 })

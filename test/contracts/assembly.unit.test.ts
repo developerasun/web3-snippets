@@ -1,21 +1,23 @@
-import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-import { expect } from "chai";
-import { ethers } from "hardhat";
+import { SnapshotRestorer, loadFixture, takeSnapshot } from "@nomicfoundation/hardhat-network-helpers";
+import { expect, use } from "chai";
+import { ethers } from "hardhat"
 import { useABIParser, useDeployer, useOptismFetcher } from "@scripts/hook";
 import { ContractRunner, ContractTransactionReceipt, Filter, TransactionRequest } from "ethers";
 import hre from "hardhat";
 import { Assembly } from "@assets/types";
-import {anyValue} from "@nomicfoundation/hardhat-chai-matchers/withArgs";
-
-const { ALCHEMY_KEY_MUMBAI, ALCHMEY_OPTIMISM_API_KEY } = process.env;
+import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
+import { Network, Alchemy } from 'alchemy-sdk'
+ 
+const { ALCHEMY_KEY_MUMBAI, ALCHMEY_OPTIMISM_API_KEY, ALCHMEY_OPTIMISM_GOE_API_KEY, ALCHEMY_WSS_OPT_GOERLI } = process.env;
 
 const contractName = "Assembly";
 const PREFIX = `unit-${contractName}`;
 
 const useFixture = async () => {
-  const contract = (await useDeployer(contractName)).contract;
+  const _contract = (await useDeployer(contractName)).contract;
   const [owner, recipient] = await ethers.getSigners();
 
+  const contract = _contract as unknown as Assembly
   return { contract, owner, recipient };
 };
 
@@ -187,7 +189,7 @@ describe(`${PREFIX}-assembly`, function TestAssembly() {
     expect(await contract.hash(3, 9)).to.equal(expected);
   });
 
-  it.only("Should allocate and return with free pointer memory", async function TestFreePointer() {
+  it.skip("Should allocate and return with free pointer memory", async function TestFreePointer() {
     const { contract } = await loadFixture(useFixture);
     expect(await contract.allocateAndReturn(44)).to.equal(44);
   });
@@ -219,7 +221,7 @@ describe(`${PREFIX}-assembly`, function TestAssembly() {
     // expect(await contract.getNativeValue({ value: valueSent })).to.equal(valueSent);
   });
 
-  it.only("Should emit an event", async function TestEvent() {
+  it.skip("Should emit an event", async function TestEvent() {
     const { contract, owner } = await loadFixture(useFixture);
 
     const id = ethers.id("Received(address,uint256)");
@@ -257,7 +259,120 @@ describe(`${PREFIX}-storage-pointer`, async function TestStoragePointer() {
   it.skip("Should update storage variable with pointer", async function TestPointerUpdate() {
     const { contract } = await loadFixture(useFixture);
     await contract.getMapPointerForUpdate();
-
+    
     expect((await contract.myMap())[2]).to.equal(BigInt(300));
   });
 });
+
+
+describe(`${PREFIX}-mock`, function TestMockContract() {
+  let blockchain: SnapshotRestorer
+
+  beforeEach('Should set up', async () => {
+    console.log("take blockchain snapshot")
+    blockchain = await takeSnapshot()
+  })
+  
+  afterEach('Should clean up', async () => {
+    console.log(`restore blockchain ${blockchain.snapshotId} to initial state`)
+    await blockchain.restore()
+  })
+
+  it.skip("Should mock storage update", async function TestMockStorage() {
+    // const { owner } = await loadFixture(useFixture);
+    // const abi = (await useABIParser('Assembly')).abi
+    // const mocked = await deployMockContract<Assembly>(owner, abi)
+    // console.log({mocked})
+    // // const fakeCn = await smock.fake<Assembly>('Assembly')
+    // // // const mocked = await smock.mock('Assembly')
+    // // console.log({fakeCn})
+    
+    // // // console.log(await fakeCn.getBalance())
+    
+  })
+  
+})
+
+describe(`${PREFIX}-alchemy-hook`, function TestAlchemyHook() {
+  let alchemy: Alchemy
+
+  const settings = {
+    apiKey: ALCHEMY_WSS_OPT_GOERLI,
+    network: Network.OPT_GOERLI
+  }
+
+  beforeEach('Should setup alchemy instance', () => {
+    const _alchemy = new Alchemy(settings)
+    alchemy = _alchemy
+  })
+
+  it.skip("Should fetch receipt info", async function TestTxStatusCheck() {
+    const exampleHash = '0xf2b47e84f96bc33c1a73495d7945ee5400129c43947bd58329ab248450d7c6dd'
+    const receipt = await alchemy.core.getTransactionReceipt(exampleHash)
+    
+    if (receipt) {
+      console.log("is success? ", receipt.status === 1 ? true : false)
+      console.log("tx hash: ", receipt.transactionHash)
+      console.log("block hash: ", receipt.blockHash)
+      console.log("block number: ", receipt.blockNumber)
+    }
+     
+    if (!receipt) {
+      console.log("transaction not mined yet")
+    }
+  })
+  
+  it.skip("Should get block number", async function TestGetBlock() {
+      const { contract, owner } = await loadFixture(useFixture);
+    ethers.provider.on("block", (b) => {
+      console.log("current block: ",b)
+    })
+
+    // await owner.sendTransaction({ value: ethers.parseEther("1")})
+    ethers.provider.on("pending", (txHash) => {
+      console.log("current hash: ", txHash)
+    })
+ 
+    await contract.setName("wow")
+    // const receipt = await tx.wait(1)
+    // console.log("executed hash: ", receipt?.hash)
+  })
+
+  it.only("Should fetch pending tx", async function TestGetPendingTx() {
+    // const provider = new ethers.WebSocketProvider(ALCHEMY_WSS_OPT_GOERLI!, 'optimism-goerli')
+
+    // provider.on("block", (b)=>{
+    //   console.log(b)
+    // })
+
+    // provider.on("pending", (h) => {
+    //   console.log(h)
+    // })
+
+    const latest = await alchemy.core.getBlock("latest")
+
+    let blockHash = ''
+
+    const targetBlockHash = '0x7fab80188d4297a376c5ded4da33faec4ea1df733a6eb1587d5c0cb06d143786'
+    const targetTxHash = '0x15ae92ee6dc524f097d3de2ffbbfab93cbe39c0407509ed386bd000371f036fd'
+
+    if (latest) {
+      blockHash = latest.hash
+    }
+
+    const response = await alchemy.core.getTransactionReceipts({ blockHash: targetBlockHash })
+
+    const { receipts }  = response
+
+    if (receipts) {
+
+      receipts.forEach((receipt) => {
+        if (receipt.transactionHash === targetTxHash) {
+          console.log("found: ", receipt.transactionHash)
+        }
+      })
+    }
+    
+  })
+  
+})

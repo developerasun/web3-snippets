@@ -1,7 +1,0 @@
-node_modules
-artifacts
-.turbo
-.vscode
-cache
-coverage*
-gasReporterOutput.json

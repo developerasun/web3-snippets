@@ -9,29 +9,5 @@
     "experimentalDecorators": true,
     "outDir": "dist",
     "declaration": false,
-    "paths": {
-      "@contracts/*": [
-        "./contracts/*"
-      ],
-      "@scripts/*": [
-        "./scripts/*"
-      ],
-      "@assets/*": [
-        "./assets/*"
-      ],
-    }
-  },
-  "include": [
-    "./hardhat.config.ts",
-    "./scripts",
-    "./test/contracts",
-    "./test/_default",
-    "./test/hook",
-    "./test/mock",
-    "./assets/types",
-  ],
-  "files": [
-    "./hardhat.config.ts",
-    "./hardhat-env.d.ts"
-  ]
+  }
 }

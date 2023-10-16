@@ -16,7 +16,7 @@ const initLogDir = () => {
 
 const getDailyLogFile = () => {
     initLogDir()
-
+    
     const date = new Date()
     const format = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}.log`
     return format
@@ -24,10 +24,16 @@ const getDailyLogFile = () => {
 
 const fullLogPath = `${baseDir}/${getDailyLogFile()}`
 
+const streams = [
+    { stream : process.stdout }, 
+    { stream : pino.destination({
+        dest: fullLogPath, 
+        append: true,
+        sync: true
+    })}, 
+]
+
 export const logger = pino({
     timestamp: pino.stdTimeFunctions.isoTime,
     base: undefined
-}, pino.destination({
-    dest:  fullLogPath,
-    append: true
-}))
+}, pino.multistream(streams))

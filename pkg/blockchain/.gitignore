@@ -1,0 +1,17 @@
+assets/types/*
+
+node_modules
+.env.development
+coverage
+coverage.json
+typechain
+
+# envs
+*.env
+
+# OpenZeppelin: Network file
+.openzeppelin/unknown-*.json
+
+#Hardhat files
+cache
+artifacts

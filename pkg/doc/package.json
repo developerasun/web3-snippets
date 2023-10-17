@@ -1,0 +1,18 @@
+{
+  "name": "@web3-snippets/doc",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "gen:doc": "apidoc -i ./src -o ./public",
+    "serve": "pnpm gen:doc &&serve public",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "apidoc": "^1.2.0",
+    "serve": "^14.2.1"
+  }
+}

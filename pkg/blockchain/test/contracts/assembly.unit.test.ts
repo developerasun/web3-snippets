@@ -417,6 +417,7 @@ describe(`${PREFIX}-transaction`, function TestTransaction() {
       to: contract.target,
       gasLimit: estimates,
       chainId: 31337, 
+      nonce: 0,
       // nonce: await owner.getNonce(), 
       maxFeePerGas, 
       maxPriorityFeePerGas,
@@ -443,14 +444,14 @@ describe(`${PREFIX}-transaction`, function TestTransaction() {
     // ================================================================== //
     // ======================= check prop guard ========================= //
     // ================================================================== //
-    const populated = await wallet.populateTransaction(tx)
+    const populated = await wallet.populateTransaction({...tx, nonce: await wallet.getNonce()})
     console.log({populated})
 
     const hash = populated.hash
     console.log("before hash: ", hash) // undefined
     expect(hash).to.be.undefined
     
-    const checked = await wallet.populateCall(tx)
+    const checked = await wallet.populateCall({...tx, nonce: await wallet.getNonce()})
     console.log("checked hash: ", checked.hash) // undefined
     expect(checked.hash).to.be.undefined
     
@@ -463,13 +464,20 @@ describe(`${PREFIX}-transaction`, function TestTransaction() {
     expect(rawTx).not.to.equal(txResponse.hash)
     expect(rawTx).not.to.equal(receipt?.hash)
     expect(await contract.value()).to.equal(10)
-    
-    const txResponse2 = await wallet.sendTransaction(tx)
+
+    const txResponse2 = await wallet.sendTransaction({...tx, nonce: await wallet.getNonce()})
     console.log("tx res2 hash: ", txResponse2.hash)
     
     const receipt2 = await txResponse2.wait(1)
     console.log("receipt2 hash: ", receipt2?.hash)
 
     expect(await contract.value()).to.equal(20)
+
+    const nm = new ethers.NonceManager(wallet)
+    console.log("w:current nonce: ", await wallet.getNonce())
+    console.log("nm:current nonce: ", await nm.getNonce())
+    nm.reset()
+
+    console.log("nm:reset nonce: ", await nm.getNonce())
   })
 })

@@ -1,4 +1,4 @@
-import { SnapshotRestorer, loadFixture, takeSnapshot } from "@nomicfoundation/hardhat-network-helpers";
+import { SnapshotRestorer, loadFixture, setBalance, takeSnapshot } from "@nomicfoundation/hardhat-network-helpers";
 import { expect, use } from "chai";
 import { ethers } from "hardhat"
 import { useABIParser, useDeployer, useOptismFetcher } from "@scripts/hook";
@@ -8,7 +8,13 @@ import { Assembly } from "@assets/types";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { Network, Alchemy } from 'alchemy-sdk'
  
-const { ALCHEMY_KEY_MUMBAI, ALCHMEY_OPTIMISM_API_KEY, ALCHMEY_OPTIMISM_GOE_API_KEY, ALCHEMY_WSS_OPT_GOERLI } = process.env;
+const { 
+  ALCHEMY_KEY_MUMBAI, 
+  ALCHMEY_OPTIMISM_API_KEY, 
+  ALCHMEY_OPTIMISM_GOE_API_KEY, 
+  ALCHEMY_WSS_OPT_GOERLI,
+  ACCOUNT_PRIVATE_KEY
+} = process.env;
 
 const contractName = "Assembly";
 const PREFIX = `unit-${contractName}`;
@@ -365,7 +371,7 @@ describe(`${PREFIX}-alchemy-hook`, function TestAlchemyHook() {
     }
   })
 
-  it.only("Should inspect latest block for tx hash", async function TestSearchBlock() {
+  it.skip("Should inspect latest block for tx hash", async function TestSearchBlock() {
     const latest = await alchemy.core.getBlock("latest")
     console.log("latest: ",latest.hash)
     const response = await alchemy.core.getTransactionReceipts({ blockHash: latest.hash })
@@ -379,4 +385,60 @@ describe(`${PREFIX}-alchemy-hook`, function TestAlchemyHook() {
     }
   })
   
+})
+
+describe(`${PREFIX}-transaction`, function TestTransaction() {
+  it.only("Should return the same tx hash", async function TestRawTx() {
+    const { contract, owner } = await loadFixture(useFixture)
+
+    const provider = ethers.provider
+    const wallet = new ethers.Wallet(ACCOUNT_PRIVATE_KEY!, provider)
+
+    await setBalance(wallet.address, ethers.parseEther("100"))
+
+    const { maxFeePerGas, maxPriorityFeePerGas } = await provider.getFeeData()
+    const estimates = await contract.setValue.estimateGas(10)
+
+    const abi = (await useABIParser('Assembly')).abi
+    const iface = ethers.Interface.from(abi)
+
+    const setName = iface.getFunction('setValue')
+    const params = setName?.inputs
+    const data = iface.encodeFunctionData(setName!, [20])
+
+    console.log({params})
+    console.log({data})
+
+    const tx:TransactionRequest = {
+      from: wallet.address, 
+      to: contract.target,
+      gasLimit: estimates,
+      chainId: 31337, 
+      nonce: await owner.getNonce(), 
+      maxFeePerGas, 
+      maxPriorityFeePerGas,
+      data
+    }
+
+    const rawTx = await wallet.signTransaction(tx)
+    console.log({rawTx})
+    
+    const txResponse = await contract.connect(wallet).setValue(10)
+    console.log("tx res hash: ", txResponse.hash)
+
+    const receipt = await txResponse.wait(1)
+    console.log("receipt hash: ", receipt?.hash)
+
+    expect(rawTx).not.to.equal(txResponse.hash)
+    expect(rawTx).not.to.equal(receipt?.hash)
+    expect(await contract.value()).to.equal(10)
+    
+    const txResponse2 = await wallet.sendTransaction(tx)
+    console.log("tx res2 hash: ", txResponse2.hash)
+    
+    const receipt2 = await txResponse2.wait(1)
+    console.log("receipt2 hash: ", receipt2?.hash)
+
+    expect(await contract.value()).to.equal(20)
+  })
 })

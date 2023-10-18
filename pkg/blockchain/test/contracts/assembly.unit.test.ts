@@ -396,18 +396,21 @@ describe(`${PREFIX}-transaction`, function TestTransaction() {
 
     await setBalance(wallet.address, ethers.parseEther("100"))
 
-    const { maxFeePerGas, maxPriorityFeePerGas } = await provider.getFeeData()
-    const estimates = await contract.setValue.estimateGas(10)
-
+    // ================================================================== //
+    // =========================== encoding ============================= //
+    // ================================================================== //
     const abi = (await useABIParser('Assembly')).abi
     const iface = ethers.Interface.from(abi)
-
     const setName = iface.getFunction('setValue')
-    const params = setName?.inputs
     const data = iface.encodeFunctionData(setName!, [20])
-
-    console.log({params})
+    
     console.log({data})
+    
+    // ================================================================== //
+    // ============================== gas =============================== //
+    // ================================================================== //
+    const { maxFeePerGas, maxPriorityFeePerGas } = await provider.getFeeData()
+    const estimates = await contract.setValue.estimateGas(10)
 
     const tx:TransactionRequest = {
       from: wallet.address, 
@@ -420,15 +423,29 @@ describe(`${PREFIX}-transaction`, function TestTransaction() {
       data
     }
 
+    // ================================================================== //
+    // ========================= compute hash =========================== //
+    // ================================================================== //
     // check when tx hash is foundable
     console.log("before nonce: ", tx.nonce)
     const rawTx = await wallet.signTransaction(tx)
     console.log({rawTx})
     console.log("after nonce: ", await owner.getNonce())
+    
+    const precomputed = ethers.Transaction.from(rawTx).hash
+    console.log("precomputed hash: ", precomputed)
+    
+    const response = await wallet.sendTransaction(tx)
+    expect(response.hash).not.to.be.undefined
+    console.log("tx response hash: ", response.hash) // tx hash
+    expect(precomputed).to.equal(response.hash)
 
+    // ================================================================== //
+    // ======================= check prop guard ========================= //
+    // ================================================================== //
     const populated = await wallet.populateTransaction(tx)
     console.log({populated})
-    
+
     const hash = populated.hash
     console.log("before hash: ", hash) // undefined
     expect(hash).to.be.undefined
@@ -436,10 +453,6 @@ describe(`${PREFIX}-transaction`, function TestTransaction() {
     const checked = await wallet.populateCall(tx)
     console.log("checked hash: ", checked.hash) // undefined
     expect(checked.hash).to.be.undefined
-    
-    const response = await wallet.sendTransaction(tx)
-    expect(response.hash).not.to.be.undefined
-    console.log("after hash: ", response.hash) // tx hash
     
     const txResponse = await contract.connect(wallet).setValue(10)
     console.log("tx res hash: ", txResponse.hash)

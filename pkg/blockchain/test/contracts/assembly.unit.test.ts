@@ -414,14 +414,32 @@ describe(`${PREFIX}-transaction`, function TestTransaction() {
       to: contract.target,
       gasLimit: estimates,
       chainId: 31337, 
-      nonce: await owner.getNonce(), 
+      // nonce: await owner.getNonce(), 
       maxFeePerGas, 
       maxPriorityFeePerGas,
       data
     }
 
+    // check when tx hash is foundable
+    console.log("before nonce: ", tx.nonce)
     const rawTx = await wallet.signTransaction(tx)
     console.log({rawTx})
+    console.log("after nonce: ", await owner.getNonce())
+
+    const populated = await wallet.populateTransaction(tx)
+    console.log({populated})
+    
+    const hash = populated.hash
+    console.log("before hash: ", hash) // undefined
+    expect(hash).to.be.undefined
+    
+    const checked = await wallet.populateCall(tx)
+    console.log("checked hash: ", checked.hash) // undefined
+    expect(checked.hash).to.be.undefined
+    
+    const response = await wallet.sendTransaction(tx)
+    expect(response.hash).not.to.be.undefined
+    console.log("after hash: ", response.hash) // tx hash
     
     const txResponse = await contract.connect(wallet).setValue(10)
     console.log("tx res hash: ", txResponse.hash)

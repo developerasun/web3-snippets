@@ -212,6 +212,9 @@ importers:
       js-yaml:
         specifier: ^4.1.0
         version: 4.1.0
+      mysql2:
+        specifier: ^3.6.2
+        version: 3.6.2
       pino:
         specifier: ^8.15.2
         version: 8.16.0

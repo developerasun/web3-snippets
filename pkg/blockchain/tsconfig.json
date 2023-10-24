@@ -23,6 +23,9 @@
       ],
     }
   },
+  "exclude": [
+    "node_modules"
+  ],
   "include": [
     "./hardhat.config.ts",
     "./scripts",

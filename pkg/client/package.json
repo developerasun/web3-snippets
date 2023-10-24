@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db": "docker-compose up -d"
   },
   "dependencies": {
     "next": "13.5.4",
@@ -21,6 +22,7 @@
     "@types/react-dom": "^18",
     "dateformat": "^5.0.3",
     "js-yaml": "^4.1.0",
+    "mysql2": "^3.6.2",
     "pino": "^8.15.2",
     "pino-pretty": "^10.2.0",
     "pino-tee": "^0.3.0",

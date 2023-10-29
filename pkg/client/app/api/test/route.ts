@@ -1,12 +1,17 @@
-import { logger } from "@app/server/logger";
+import { LogContext, logger } from "@app/server/logger";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-    logger.info("name check: jake")
-    logger.warn("something serious going on here")
-    logger.error("bad bad things happened")
+  const ctx = new LogContext("windows", "mac", "linux");
+  const params = ctx.getParams();
+  console.log("constructor args: ", params);
 
-    return NextResponse.json({
-        message: "hello jake"
-    })
+  // method overloading
+  ctx.doLog();
+  ctx.overload();
+  ctx.overload(456789);
+
+  return NextResponse.json({
+    message: "hello jake",
+  });
 }

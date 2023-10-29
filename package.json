@@ -8,9 +8,9 @@
     "pkg/*"
   ],
   "scripts": {
-    "client:dev": "pnpm --filter @web3-snippets/client dev",
-    "server:test": "pnpm --filter @web3-snippets/server test",
-    "chain:compile": "pnpm --filter @web3-snippets/blockchain compile"
+    "client": "pnpm --filter @web3-snippets/client",
+    "server": "pnpm --filter @web3-snippets/server",
+    "chain": "pnpm --filter @web3-snippets/blockchain"
   },
   "author": {
     "name": "Jake Sung",

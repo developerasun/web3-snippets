@@ -388,7 +388,7 @@ describe(`${PREFIX}-alchemy-hook`, function TestAlchemyHook() {
 })
 
 describe(`${PREFIX}-transaction`, function TestTransaction() {
-  it.only("Should return the same tx hash", async function TestRawTx() {
+  it.skip("Should return the same tx hash", async function TestRawTx() {
     const { contract, owner } = await loadFixture(useFixture)
 
     const provider = ethers.provider
@@ -479,5 +479,53 @@ describe(`${PREFIX}-transaction`, function TestTransaction() {
     nm.reset()
 
     console.log("nm:reset nonce: ", await nm.getNonce())
+  })
+  
+  it.only("Should compute tx hash", async function TestComputeHash() {
+    const { contract, owner } = await loadFixture(useFixture)
+    const provider = ethers.provider
+
+    const wallet = new ethers.Wallet(ACCOUNT_PRIVATE_KEY, provider)
+    await setBalance(wallet.address, ethers.parseEther("100"))
+
+    const abi = (await useABIParser("Assembly")).abi
+    const iface = ethers.Interface.from(abi)
+    const setValue = iface.getFunction("setValue")!
+    const data = iface.encodeFunctionData(setValue, [100])
+
+    const { maxFeePerGas, maxPriorityFeePerGas } = await provider.getFeeData()
+    const estimates = await contract.setValue.estimateGas(100)
+
+    const to = contract.target as string
+    const _nonce = await wallet.getNonce()
+    console.log({_nonce})
+    const nonce = _nonce !== undefined ? _nonce : 0
+
+    console.log({nonce})
+
+    // require at least 8 props for a correct tx hashcomputation 
+    const preTx: TransactionRequest = { 
+      gasLimit: estimates, // required
+      data, // required
+      // from: wallet.address, // non-required
+      to, // required
+      maxFeePerGas, // required
+      maxPriorityFeePerGas,  // required
+      // nonce, // non-required
+      chainId: (await provider.getNetwork()).chainId // required 
+    }
+
+    const signedTx = await wallet.signTransaction(preTx)
+
+    console.log("nonce after signing: ", await wallet.getNonce())
+    
+    const computedTxHash = ethers.keccak256(signedTx)
+    const serializedTxHash = ethers.Transaction.from(signedTx).hash!
+
+    const txResponse = await wallet.sendTransaction(preTx)
+  
+    expect(computedTxHash).to.equal(txResponse.hash)
+    expect(serializedTxHash).to.equal(txResponse.hash)
+    expect(computedTxHash).to.equal(serializedTxHash)
   })
 })

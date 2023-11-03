@@ -1,20 +1,14 @@
 import { SnapshotRestorer, loadFixture, setBalance, takeSnapshot } from "@nomicfoundation/hardhat-network-helpers";
 import { expect, use } from "chai";
-import { ethers } from "hardhat"
+import { ethers } from "hardhat";
 import { useABIParser, useDeployer, useOptismFetcher } from "@scripts/hook";
-import { ContractRunner, ContractTransactionReceipt, Filter, TransactionRequest } from "ethers";
+import { AlchemyProvider, Contract, ContractRunner, ContractTransactionReceipt, Filter, TransactionRequest, formatEther } from "ethers";
 import hre from "hardhat";
 import { Assembly } from "@assets/types";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
-import { Network, Alchemy } from 'alchemy-sdk'
- 
-const { 
-  ALCHEMY_KEY_MUMBAI, 
-  ALCHMEY_OPTIMISM_API_KEY, 
-  ALCHMEY_OPTIMISM_GOE_API_KEY, 
-  ALCHEMY_WSS_OPT_GOERLI,
-  ACCOUNT_PRIVATE_KEY
-} = process.env;
+import { Network, Alchemy } from "alchemy-sdk";
+
+const { ALCHEMY_KEY_MUMBAI, ALCHMEY_OPTIMISM_API_KEY, ALCHMEY_OPTIMISM_GOE_API_KEY, ALCHEMY_WSS_OPT_GOERLI, ACCOUNT_PRIVATE_KEY } = process.env;
 
 const contractName = "Assembly";
 const PREFIX = `unit-${contractName}`;
@@ -23,7 +17,7 @@ const useFixture = async () => {
   const _contract = (await useDeployer(contractName)).contract;
   const [owner, recipient] = await ethers.getSigners();
 
-  const contract = _contract as unknown as Assembly
+  const contract = _contract as unknown as Assembly;
   return { contract, owner, recipient };
 };
 
@@ -251,13 +245,15 @@ describe(`${PREFIX}-assembly`, function TestAssembly() {
 
     console.log("is id the same with topic hash?: ", id === topicHash);
 
-    const sender = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-    const value = ethers.parseEther("1")
+    const sender = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+    const value = ethers.parseEther("1");
 
-    const assembly = contract as unknown as Assembly
-    const runner = owner as unknown as ContractRunner
+    const assembly = contract as unknown as Assembly;
+    const runner = owner as unknown as ContractRunner;
 
-    await expect(assembly.connect(runner).getEmittedEvent({ value, from: sender})).to.emit(contract, "Received").withArgs(sender,value)
+    await expect(assembly.connect(runner).getEmittedEvent({ value, from: sender }))
+      .to.emit(contract, "Received")
+      .withArgs(sender, value);
   });
 });
 
@@ -265,24 +261,23 @@ describe(`${PREFIX}-storage-pointer`, async function TestStoragePointer() {
   it.skip("Should update storage variable with pointer", async function TestPointerUpdate() {
     const { contract } = await loadFixture(useFixture);
     await contract.getMapPointerForUpdate();
-    
+
     expect((await contract.myMap())[2]).to.equal(BigInt(300));
   });
 });
 
-
 describe(`${PREFIX}-mock`, function TestMockContract() {
-  let blockchain: SnapshotRestorer
+  let blockchain: SnapshotRestorer;
 
-  beforeEach('Should set up', async () => {
-    console.log("take blockchain snapshot")
-    blockchain = await takeSnapshot()
-  })
-  
-  afterEach('Should clean up', async () => {
-    console.log(`restore blockchain ${blockchain.snapshotId} to initial state`)
-    await blockchain.restore()
-  })
+  beforeEach("Should set up", async () => {
+    console.log("take blockchain snapshot");
+    blockchain = await takeSnapshot();
+  });
+
+  afterEach("Should clean up", async () => {
+    console.log(`restore blockchain ${blockchain.snapshotId} to initial state`);
+    await blockchain.restore();
+  });
 
   it.skip("Should mock storage update", async function TestMockStorage() {
     // const { owner } = await loadFixture(useFixture);
@@ -292,240 +287,235 @@ describe(`${PREFIX}-mock`, function TestMockContract() {
     // // const fakeCn = await smock.fake<Assembly>('Assembly')
     // // // const mocked = await smock.mock('Assembly')
     // // console.log({fakeCn})
-    
     // // // console.log(await fakeCn.getBalance())
-    
-  })
-  
-})
+  });
+});
 
 describe(`${PREFIX}-alchemy-hook`, function TestAlchemyHook() {
-  let alchemy: Alchemy
+  let alchemy: Alchemy;
 
   const settings = {
     apiKey: ALCHMEY_OPTIMISM_GOE_API_KEY,
-    network: Network.OPT_GOERLI
-  }
+    network: Network.OPT_GOERLI,
+  };
 
-  beforeEach('Should setup alchemy instance', () => {
-    const _alchemy = new Alchemy(settings)
-    alchemy = _alchemy
-  })
+  beforeEach("Should setup alchemy instance", () => {
+    const _alchemy = new Alchemy(settings);
+    alchemy = _alchemy;
+  });
 
   it.skip("Should fetch receipt info", async function TestTxStatusCheck() {
-    const exampleHash = '0xf2b47e84f96bc33c1a73495d7945ee5400129c43947bd58329ab248450d7c6dd'
-    const receipt = await alchemy.core.getTransactionReceipt(exampleHash)
-    
+    const exampleHash = "0xf2b47e84f96bc33c1a73495d7945ee5400129c43947bd58329ab248450d7c6dd";
+    const receipt = await alchemy.core.getTransactionReceipt(exampleHash);
+
     if (receipt) {
-      console.log("is success? ", receipt.status === 1 ? true : false)
-      console.log("tx hash: ", receipt.transactionHash)
-      console.log("block hash: ", receipt.blockHash)
-      console.log("block number: ", receipt.blockNumber)
+      console.log("is success? ", receipt.status === 1 ? true : false);
+      console.log("tx hash: ", receipt.transactionHash);
+      console.log("block hash: ", receipt.blockHash);
+      console.log("block number: ", receipt.blockNumber);
     }
-     
+
     if (!receipt) {
-      console.log("transaction not mined yet")
+      console.log("transaction not mined yet");
     }
-  })
-  
+  });
+
   it.skip("Should get block number", async function TestGetBlock() {
-      const { contract, owner } = await loadFixture(useFixture);
+    const { contract, owner } = await loadFixture(useFixture);
     ethers.provider.on("block", (b) => {
-      console.log("current block: ",b)
-    })
+      console.log("current block: ", b);
+    });
 
     // await owner.sendTransaction({ value: ethers.parseEther("1")})
     ethers.provider.on("pending", (txHash) => {
-      console.log("current hash: ", txHash)
-    })
- 
-    await contract.setName("wow")
+      console.log("current hash: ", txHash);
+    });
+
+    await contract.setName("wow");
     // const receipt = await tx.wait(1)
     // console.log("executed hash: ", receipt?.hash)
-  })
+  });
 
   // todo
   it.skip("Should fetch pending tx", async function TestGetPendingTx() {
-    const latest = await alchemy.core.getBlock("latest")
+    const latest = await alchemy.core.getBlock("latest");
 
-    let blockHash = ''
+    let blockHash = "";
 
-    const targetBlockHash = '0x7fab80188d4297a376c5ded4da33faec4ea1df733a6eb1587d5c0cb06d143786'
-    const targetTxHash = '0x15ae92ee6dc524f097d3de2ffbbfab93cbe39c0407509ed386bd000371f036fd'
+    const targetBlockHash = "0x7fab80188d4297a376c5ded4da33faec4ea1df733a6eb1587d5c0cb06d143786";
+    const targetTxHash = "0x15ae92ee6dc524f097d3de2ffbbfab93cbe39c0407509ed386bd000371f036fd";
 
     if (latest) {
-      blockHash = latest.hash
+      blockHash = latest.hash;
     }
 
-    const response = await alchemy.core.getTransactionReceipts({ blockHash: targetBlockHash })
+    const response = await alchemy.core.getTransactionReceipts({ blockHash: targetBlockHash });
 
-    const { receipts }  = response
+    const { receipts } = response;
 
     if (receipts) {
-
       receipts.forEach((receipt) => {
         if (receipt.transactionHash === targetTxHash) {
-          console.log("found: ", receipt.transactionHash)
+          console.log("found: ", receipt.transactionHash);
         }
-      })
+      });
     }
-  })
+  });
 
   it.skip("Should inspect latest block for tx hash", async function TestSearchBlock() {
-    const latest = await alchemy.core.getBlock("latest")
-    console.log("latest: ",latest.hash)
-    const response = await alchemy.core.getTransactionReceipts({ blockHash: latest.hash })
+    const latest = await alchemy.core.getBlock("latest");
+    console.log("latest: ", latest.hash);
+    const response = await alchemy.core.getTransactionReceipts({ blockHash: latest.hash });
 
-    const { receipts } = response
+    const { receipts } = response;
 
     if (receipts) {
       receipts.forEach((receipt) => {
-        console.log(receipt.transactionHash)
-      })
+        console.log(receipt.transactionHash);
+      });
     }
-  })
-  
-})
+  });
+});
 
 describe(`${PREFIX}-transaction`, function TestTransaction() {
   it.skip("Should return the same tx hash", async function TestRawTx() {
-    const { contract, owner } = await loadFixture(useFixture)
+    const { contract, owner } = await loadFixture(useFixture);
 
-    const provider = ethers.provider
-    const wallet = new ethers.Wallet(ACCOUNT_PRIVATE_KEY!, provider)
+    const provider = ethers.provider;
+    const wallet = new ethers.Wallet(ACCOUNT_PRIVATE_KEY!, provider);
 
-    await setBalance(wallet.address, ethers.parseEther("100"))
+    await setBalance(wallet.address, ethers.parseEther("100"));
 
     // ================================================================== //
     // =========================== encoding ============================= //
     // ================================================================== //
-    const abi = (await useABIParser('Assembly')).abi
-    const iface = ethers.Interface.from(abi)
-    const setName = iface.getFunction('setValue')
-    const data = iface.encodeFunctionData(setName!, [20])
-    
-    console.log({data})
-    
+    const abi = (await useABIParser("Assembly")).abi;
+    const iface = ethers.Interface.from(abi);
+    const setName = iface.getFunction("setValue");
+    const data = iface.encodeFunctionData(setName!, [20]);
+
+    console.log({ data });
+
     // ================================================================== //
     // ============================== gas =============================== //
     // ================================================================== //
-    const { maxFeePerGas, maxPriorityFeePerGas } = await provider.getFeeData()
-    const estimates = await contract.setValue.estimateGas(10)
+    const { maxFeePerGas, maxPriorityFeePerGas } = await provider.getFeeData();
+    const estimates = await contract.setValue.estimateGas(10);
 
-    const tx:TransactionRequest = {
-      from: wallet.address, 
+    const tx: TransactionRequest = {
+      from: wallet.address,
       to: contract.target,
       gasLimit: estimates,
-      chainId: 31337, 
+      chainId: 31337,
       nonce: 0,
-      // nonce: await owner.getNonce(), 
-      maxFeePerGas, 
+      // nonce: await owner.getNonce(),
+      maxFeePerGas,
       maxPriorityFeePerGas,
-      data
-    }
+      data,
+    };
 
     // ================================================================== //
     // ========================= compute hash =========================== //
     // ================================================================== //
     // check when tx hash is foundable
-    console.log("before nonce: ", tx.nonce)
-    const rawTx = await wallet.signTransaction(tx)
-    console.log({rawTx})
-    console.log("after nonce: ", await owner.getNonce())
-    
-    const precomputed = ethers.Transaction.from(rawTx).hash
-    console.log("precomputed hash: ", precomputed)
-    
-    const response = await wallet.sendTransaction(tx)
-    expect(response.hash).not.to.be.undefined
-    console.log("tx response hash: ", response.hash) // tx hash
-    expect(precomputed).to.equal(response.hash)
+    console.log("before nonce: ", tx.nonce);
+    const rawTx = await wallet.signTransaction(tx);
+    console.log({ rawTx });
+    console.log("after nonce: ", await owner.getNonce());
+
+    const precomputed = ethers.Transaction.from(rawTx).hash;
+    console.log("precomputed hash: ", precomputed);
+
+    const response = await wallet.sendTransaction(tx);
+    expect(response.hash).not.to.be.undefined;
+    console.log("tx response hash: ", response.hash); // tx hash
+    expect(precomputed).to.equal(response.hash);
 
     // ================================================================== //
     // ======================= check prop guard ========================= //
     // ================================================================== //
-    const populated = await wallet.populateTransaction({...tx, nonce: await wallet.getNonce()})
-    console.log({populated})
+    const populated = await wallet.populateTransaction({ ...tx, nonce: await wallet.getNonce() });
+    console.log({ populated });
 
-    const hash = populated.hash
-    console.log("before hash: ", hash) // undefined
-    expect(hash).to.be.undefined
-    
-    const checked = await wallet.populateCall({...tx, nonce: await wallet.getNonce()})
-    console.log("checked hash: ", checked.hash) // undefined
-    expect(checked.hash).to.be.undefined
-    
-    const txResponse = await contract.connect(wallet).setValue(10)
-    console.log("tx res hash: ", txResponse.hash)
+    const hash = populated.hash;
+    console.log("before hash: ", hash); // undefined
+    expect(hash).to.be.undefined;
 
-    const receipt = await txResponse.wait(1)
-    console.log("receipt hash: ", receipt?.hash)
+    const checked = await wallet.populateCall({ ...tx, nonce: await wallet.getNonce() });
+    console.log("checked hash: ", checked.hash); // undefined
+    expect(checked.hash).to.be.undefined;
 
-    expect(rawTx).not.to.equal(txResponse.hash)
-    expect(rawTx).not.to.equal(receipt?.hash)
-    expect(await contract.value()).to.equal(10)
+    const txResponse = await contract.connect(wallet).setValue(10);
+    console.log("tx res hash: ", txResponse.hash);
 
-    const txResponse2 = await wallet.sendTransaction({...tx, nonce: await wallet.getNonce()})
-    console.log("tx res2 hash: ", txResponse2.hash)
-    
-    const receipt2 = await txResponse2.wait(1)
-    console.log("receipt2 hash: ", receipt2?.hash)
+    const receipt = await txResponse.wait(1);
+    console.log("receipt hash: ", receipt?.hash);
 
-    expect(await contract.value()).to.equal(20)
+    expect(rawTx).not.to.equal(txResponse.hash);
+    expect(rawTx).not.to.equal(receipt?.hash);
+    expect(await contract.value()).to.equal(10);
 
-    const nm = new ethers.NonceManager(wallet)
-    console.log("w:current nonce: ", await wallet.getNonce())
-    console.log("nm:current nonce: ", await nm.getNonce())
-    nm.reset()
+    const txResponse2 = await wallet.sendTransaction({ ...tx, nonce: await wallet.getNonce() });
+    console.log("tx res2 hash: ", txResponse2.hash);
 
-    console.log("nm:reset nonce: ", await nm.getNonce())
-  })
-  
-  it.only("Should compute tx hash", async function TestComputeHash() {
-    const { contract, owner } = await loadFixture(useFixture)
-    const provider = ethers.provider
+    const receipt2 = await txResponse2.wait(1);
+    console.log("receipt2 hash: ", receipt2?.hash);
 
-    const wallet = new ethers.Wallet(ACCOUNT_PRIVATE_KEY, provider)
-    await setBalance(wallet.address, ethers.parseEther("100"))
+    expect(await contract.value()).to.equal(20);
 
-    const abi = (await useABIParser("Assembly")).abi
-    const iface = ethers.Interface.from(abi)
-    const setValue = iface.getFunction("setValue")!
-    const data = iface.encodeFunctionData(setValue, [100])
+    const nm = new ethers.NonceManager(wallet);
+    console.log("w:current nonce: ", await wallet.getNonce());
+    console.log("nm:current nonce: ", await nm.getNonce());
+    nm.reset();
 
-    const { maxFeePerGas, maxPriorityFeePerGas } = await provider.getFeeData()
-    const estimates = await contract.setValue.estimateGas(100)
+    console.log("nm:reset nonce: ", await nm.getNonce());
+  });
 
-    const to = contract.target as string
-    const _nonce = await wallet.getNonce()
-    console.log({_nonce})
-    const nonce = _nonce !== undefined ? _nonce : 0
+  it.skip("Should compute tx hash", async function TestComputeHash() {
+    const { contract, owner } = await loadFixture(useFixture);
+    const provider = ethers.provider;
 
-    console.log({nonce})
+    const wallet = new ethers.Wallet(ACCOUNT_PRIVATE_KEY, provider);
+    await setBalance(wallet.address, ethers.parseEther("100"));
 
-    // require at least 8 props for a correct tx hashcomputation 
-    const preTx: TransactionRequest = { 
+    const abi = (await useABIParser("Assembly")).abi;
+    const iface = ethers.Interface.from(abi);
+    const setValue = iface.getFunction("setValue")!;
+    const data = iface.encodeFunctionData(setValue, [100]);
+
+    const { maxFeePerGas, maxPriorityFeePerGas } = await provider.getFeeData();
+    const estimates = await contract.setValue.estimateGas(100);
+
+    const to = contract.target as string;
+    const _nonce = await wallet.getNonce();
+    console.log({ _nonce });
+    const nonce = _nonce !== undefined ? _nonce : 0;
+
+    console.log({ nonce });
+
+    // require at least 8 props for a correct tx hashcomputation
+    const preTx: TransactionRequest = {
       gasLimit: estimates, // required
       data, // required
       // from: wallet.address, // non-required
       to, // required
       maxFeePerGas, // required
-      maxPriorityFeePerGas,  // required
+      maxPriorityFeePerGas, // required
       // nonce, // non-required
-      chainId: (await provider.getNetwork()).chainId // required 
-    }
+      chainId: (await provider.getNetwork()).chainId, // required
+    };
 
-    const signedTx = await wallet.signTransaction(preTx)
+    const signedTx = await wallet.signTransaction(preTx);
 
-    console.log("nonce after signing: ", await wallet.getNonce())
-    
-    const computedTxHash = ethers.keccak256(signedTx)
-    const serializedTxHash = ethers.Transaction.from(signedTx).hash!
+    console.log("nonce after signing: ", await wallet.getNonce());
 
-    const txResponse = await wallet.sendTransaction(preTx)
-  
-    expect(computedTxHash).to.equal(txResponse.hash)
-    expect(serializedTxHash).to.equal(txResponse.hash)
-    expect(computedTxHash).to.equal(serializedTxHash)
-  })
-})
+    const computedTxHash = ethers.keccak256(signedTx);
+    const serializedTxHash = ethers.Transaction.from(signedTx).hash!;
+
+    const txResponse = await wallet.sendTransaction(preTx);
+
+    expect(computedTxHash).to.equal(txResponse.hash);
+    expect(serializedTxHash).to.equal(txResponse.hash);
+    expect(computedTxHash).to.equal(serializedTxHash);
+  });
+});

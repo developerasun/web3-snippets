@@ -2,8 +2,8 @@ import { ethers } from "hardhat";
 import hre from "hardhat";
 import { Contract, Interface, InterfaceAbi, Mnemonic, Networkish, TransactionReceipt } from "ethers";
 import TEST_ABI from "../assets/abi/MyToken.polygonMumbai.json";
-import { JobCallback, RecurrenceRule, scheduleJob, gracefulShutdown } from 'node-schedule'
-import pino from 'pino'
+import { JobCallback, RecurrenceRule, scheduleJob, gracefulShutdown } from "node-schedule";
+import pino from "pino";
 
 const {
   ALCHEMY_KEY_MUMBAI,
@@ -15,12 +15,12 @@ const {
 
 export const logger = pino({
   transport: {
-    target: 'pino-pretty',
+    target: "pino-pretty",
     options: {
-      colorize: true
-    }
+      colorize: true,
+    },
   },
-})
+});
 
 // ================================================================== //
 // ============================ common  ============================= //
@@ -38,7 +38,7 @@ export async function useDeployer(contractName: string) {
   if (network === "hardhat") {
     // @ts-ignore
     // await hre.storageLayout.export()
-    
+
     const [deployer, recipient] = await ethers.getSigners();
 
     return { contract, deployer, recipient };
@@ -53,13 +53,13 @@ export async function useDeployer(contractName: string) {
     return { contract };
   }
 
-  // if (network === "optimisticGoerli") {
-  //   const targetNetwork = "optimism-goerli";
-  //   const targetAddr = contract.target as string;
+  if (network === "optimisticGoerli") {
+    const targetNetwork = "optimism-goerli";
+    const targetAddr = contract.target as string;
 
-  //   await useWaitBlock(contract, targetNetwork, ALCHMEY_OPTIMISM_GOE_API_KEY!);
-  //   await useVerifier(targetNetwork, targetAddr);
-  // }
+    await useWaitBlock(contract, targetNetwork, ALCHMEY_OPTIMISM_GOE_API_KEY!);
+    await useVerifier(targetNetwork, targetAddr);
+  }
 
   return { contract };
 }
@@ -152,15 +152,14 @@ export async function useEventParser(abi: Interface | InterfaceAbi) {
   return { eventMap };
 }
 
-
 // ================================================================== //
 // ========================== timestamp  ============================ //
 // ================================================================== //
 export function useEpochTime() {
   return {
-    utc: Math.floor(new Date().getTime()/1000.0), // The getTime method returns the time in milliseconds.
-    local: new Date().toLocaleString()
-  } 
+    utc: Math.floor(new Date().getTime() / 1000.0), // The getTime method returns the time in milliseconds.
+    local: new Date().toLocaleString(),
+  };
 }
 
 export function useUnixTable(timestamp: number) {
@@ -173,28 +172,28 @@ export function useUnixTable(timestamp: number) {
 
 // @dev cron job can't be used for second-based jobs. use shell script for it instead
 export function useCron(schedule: string, callback: JobCallback) {
-  const job = scheduleJob(schedule, callback)
+  const job = scheduleJob(schedule, callback);
 }
 
-export async function useInterval(callback: TimerHandler, timeout: number, clear: number): Promise<{done: Boolean}> {
-  logger.debug(`running scheduled jobs for ${timeout} milliseconds`)
+export async function useInterval(callback: TimerHandler, timeout: number, clear: number): Promise<{ done: Boolean }> {
+  logger.debug(`running scheduled jobs for ${timeout} milliseconds`);
 
-  const intervalId = setInterval(callback, timeout)
+  const intervalId = setInterval(callback, timeout);
 
-  let done = false
+  let done = false;
 
   const timeoutId = setTimeout(() => {
-    logger.debug(`terminating interval with id ${intervalId} after ${clear} milliseconds`)
-    clearInterval(intervalId)
-    logger.info(`terminating timeout with id ${timeoutId}`)
+    logger.debug(`terminating interval with id ${intervalId} after ${clear} milliseconds`);
+    clearInterval(intervalId);
+    logger.info(`terminating timeout with id ${timeoutId}`);
   }, clear);
 
   return new Promise((resolve) => {
-    done = true
+    done = true;
     setTimeout(() => {
-      resolve({done})
+      resolve({ done });
     }, clear + 1000);
-  })
+  });
 }
 
 // ================================================================== //

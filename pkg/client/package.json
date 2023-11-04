@@ -8,9 +8,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db": "docker-compose up -d"
+    "db": "docker-compose up -d",
+    "local": "json-server --watch db.json"
   },
   "dependencies": {
+    "json-server": "^0.17.4",
     "next": "13.5.4",
     "react": "^18",
     "react-dom": "^18"

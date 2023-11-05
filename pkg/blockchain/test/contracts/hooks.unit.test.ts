@@ -1,5 +1,6 @@
 import { logger, useCron, useEpochTime, useInterval } from "@scripts/hook";
 import { expect } from "chai";
+import { DateTime, FixedOffsetZone } from "luxon";
 
 const PREFIX = "hooks";
 
@@ -183,18 +184,44 @@ describe(`${PREFIX}-promise-handle`, function TestHandlePromise() {
     expect(rHuman.error).to.be.undefined;
   });
 
-  it.only("Should reject but not throw", async function TestNoException() {
+  it.skip("Should reject but not throw", async function TestNoException() {
     interface ICat {
-      sound: string
+      sound: string;
     }
 
-    const rejected = new Promise<ICat>((_, reject) => reject("REJECT: woof"))
-    const rCat = await typedHandle<ICat>(rejected)
+    const rejected = new Promise<ICat>((_, reject) => reject("REJECT: woof"));
+    const rCat = await typedHandle<ICat>(rejected);
 
-    if (rCat.error) { 
-      console.log("got rejected message : ", rCat.error)
+    if (rCat.error) {
+      console.log("got rejected message : ", rCat.error);
     }
 
-    expect(rCat.error).to.equal("REJECT: woof")
-  })
+    expect(rCat.error).to.equal("REJECT: woof");
+  });
+
+  it.skip("Should convert UTC to local date time", async function TestTimeConversion() {
+    // const utc = useEpochTime().utc;
+    const seoulOffset = (3600 * 9) / 1000; // 9 hours ahead of utc
+    const ss = "4";
+    // FixedOffsetZone.utcInstance.offset(ts)
+    // console.log({ utc });
+    // console.log(DateTime.local({ zone: "Asia/Seoul" }));
+
+    // const datetime = DateTime.local({ zone: "Asia/Seoul" });
+    // const { year, month, day, hour, minute, second, millisecond } = datetime;
+    // const utc = datetime.toUTC();
+    // const d = datetime.toJSDate();
+    // console.log(d.toLocaleDateString(), d.toLocaleTimeString());
+    // console.log({ utc });
+    // const _d = new Date();
+    // console.log("from js: ", _d.toLocaleTimeString(), _d.toLocaleDateString());
+
+    // console.trace("showme");
+    // console.table({ seoulOffset, ss });
+
+    const utc = useEpochTime().utc;
+    const local = useEpochTime().local;
+    console.table({ utc, local });
+    console.trace({ utc, local });
+  });
 });

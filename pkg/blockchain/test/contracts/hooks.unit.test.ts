@@ -202,26 +202,19 @@ describe(`${PREFIX}-promise-handle`, function TestHandlePromise() {
   it.skip("Should convert UTC to local date time", async function TestTimeConversion() {
     // const utc = useEpochTime().utc;
     const seoulOffset = (3600 * 9) / 1000; // 9 hours ahead of utc
-    const ss = "4";
-    // FixedOffsetZone.utcInstance.offset(ts)
-    // console.log({ utc });
-    // console.log(DateTime.local({ zone: "Asia/Seoul" }));
-
-    // const datetime = DateTime.local({ zone: "Asia/Seoul" });
-    // const { year, month, day, hour, minute, second, millisecond } = datetime;
-    // const utc = datetime.toUTC();
-    // const d = datetime.toJSDate();
-    // console.log(d.toLocaleDateString(), d.toLocaleTimeString());
-    // console.log({ utc });
-    // const _d = new Date();
-    // console.log("from js: ", _d.toLocaleTimeString(), _d.toLocaleDateString());
-
-    // console.trace("showme");
-    // console.table({ seoulOffset, ss });
 
     const utc = useEpochTime().utc;
     const local = useEpochTime().local;
     console.table({ utc, local });
     console.trace({ utc, local });
+  });
+
+  it.only("Should match for Jira issue key", async function TestJiraExpression() {
+    const exampleJiraKey = "PP-123--fix-some-shit";
+    const target = "PP-123--";
+    const regex = new RegExp("[A-Z]+-[0-9]+--");
+    console.log(exampleJiraKey.match(regex)?.[0]);
+
+    expect(exampleJiraKey.match(regex)?.[0]).to.equal(target);
   });
 });

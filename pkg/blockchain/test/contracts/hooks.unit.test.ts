@@ -209,12 +209,19 @@ describe(`${PREFIX}-promise-handle`, function TestHandlePromise() {
     console.trace({ utc, local });
   });
 
-  it.only("Should match for Jira issue key", async function TestJiraExpression() {
+  it.skip("Should match for Jira issue key", async function TestJiraExpression() {
     const exampleJiraKey = "PP-123--fix-some-shit";
     const target = "PP-123--";
     const regex = new RegExp("[A-Z]+-[0-9]+--");
     console.log(exampleJiraKey.match(regex)?.[0]);
 
     expect(exampleJiraKey.match(regex)?.[0]).to.equal(target);
+  });
+
+  it.only("Should check a proper ipfs cid", async function TestCID() {
+    const { cid } = await import("is-ipfs");
+    const isValidCID = cid("QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB");
+
+    expect(isValidCID).to.be.true;
   });
 });

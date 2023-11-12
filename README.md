@@ -36,3 +36,16 @@ Nextjs app with mysql.
 - running mysql server with `docker`
 - port mapping(host:container) `3307:3306`
 - sql exercises from [Programmers](https://school.programmers.co.kr/learn/challenges?tab=sql_practice_kit) and  [W3Schools](https://www.w3schools.com/sql/exercise.asp?filename=exercise_functions1)
+
+
+### pkg/doc
+
+API documentation for this repo.
+
+### pkg/infra
+
+Docker images for this repo
+
+### pkg/shell
+
+Utilities for unix shell commands

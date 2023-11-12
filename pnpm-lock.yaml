@@ -258,8 +258,6 @@ importers:
         specifier: ^14.2.1
         version: 14.2.1
 
-  pkg/server: {}
-
 packages:
 
   /@adraffy/ens-normalize@1.10.0:

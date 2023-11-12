@@ -1,0 +1,30 @@
+{"level":30,"time":"2023-10-29T11:41:25.721Z","msg":"name check: jake"}
+{"level":40,"time":"2023-10-29T11:41:25.725Z","msg":"something serious going on here"}
+{"level":50,"time":"2023-10-29T11:41:25.726Z","msg":"bad bad things happened"}
+{"level":30,"time":"2023-10-29T11:41:25.728Z","msg":"got message from : jake"}
+{"level":30,"time":"2023-10-29T11:44:14.473Z","msg":"name check: jake"}
+{"level":40,"time":"2023-10-29T11:44:14.482Z","msg":"something serious going on here"}
+{"level":50,"time":"2023-10-29T11:44:14.487Z","msg":"bad bad things happened"}
+{"level":30,"time":"2023-10-29T11:44:14.498Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T11:44:42.216Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T11:51:38.541Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T11:53:31.462Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T11:57:43.104Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T11:58:25.688Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T11:58:43.981Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T11:59:15.456Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T11:59:53.045Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:00:07.450Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:00:18.653Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:00:38.594Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:01:31.623Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:01:47.699Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:02:47.754Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:03:26.403Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:04:33.832Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:05:23.479Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:05:37.670Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:22:26.478Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:22:26.496Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:25:57.318Z","msg":"this will be logged in second order"}
+{"level":30,"time":"2023-10-29T12:28:11.852Z","msg":"this will be logged in second order"}

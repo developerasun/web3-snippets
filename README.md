@@ -31,8 +31,8 @@ Solidity and corresponding unit test codes is primary and other web3 materials l
 
 ### pkg/client
 
-- 
+Nextjs app with mysql.
 
-### pkg/server
-
-- 
+- running mysql server with `docker`
+- port mapping(host:container) `3307:3306`
+- sql exercises from [Programmers](https://school.programmers.co.kr/learn/challenges?tab=sql_practice_kit) and  [W3Schools](https://www.w3schools.com/sql/exercise.asp?filename=exercise_functions1)

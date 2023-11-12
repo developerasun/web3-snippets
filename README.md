@@ -40,7 +40,7 @@ Nextjs app with mysql.
 
 ### pkg/doc
 
-API documentation for this repo.
+API documentation and sql exercise for this repo.
 
 ### pkg/infra
 

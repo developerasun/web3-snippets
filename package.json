@@ -9,8 +9,10 @@
   ],
   "scripts": {
     "client": "pnpm --filter @web3-snippets/client",
-    "server": "pnpm --filter @web3-snippets/server",
-    "chain": "pnpm --filter @web3-snippets/blockchain"
+    "chain": "pnpm --filter @web3-snippets/blockchain",
+    "doc": "pnpm --filter @web3-snippets/doc",
+    "infra": "pnpm --filter @web3-snippets/infra",
+    "shell": "pnpm --filter @web3-snippets/shell"
   },
   "author": {
     "name": "Jake Sung",

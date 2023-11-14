@@ -17,6 +17,11 @@ export async function GET(request: Request) {
   console.log({ fromMiddleware });
   console.log({ _globalFoo });
 
+  console.log("from global: ", global.FOO);
+  
+  // should throw error
+  // global.FOO = "wwwwww"
+
   return NextResponse.json({
     message: "hello jake",
   });

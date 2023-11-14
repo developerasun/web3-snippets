@@ -1,13 +1,21 @@
-import { DUMMY_VALUES } from "@/server/lib/constants";
+import s from "./inject";
 
-const newDummies: typeof DUMMY_VALUES = Object.create(DUMMY_VALUES);
+declare global {
+  var FOO: string;
+}
 
 export async function register() {
-  try {
-    console.time("on cold start");
-    console.log(DUMMY_VALUES);
-    console.timeEnd("on cold start");
-  } catch (error) {
-    console.error(error);
-  }
+  console.time("on cold start");
+  
+  const _s = JSON.parse(s);
+  console.log(_s.FOO);
+
+  global.FOO = _s.FOO;
+
+  // add guard
+  Object.defineProperty(global, "FOO", {
+    writable: false
+  })
+
+  console.timeEnd("on cold start");
 }

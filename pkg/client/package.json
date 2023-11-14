@@ -4,7 +4,9 @@
   "private": true,
   "main": "./app/page.tsx",
   "scripts": {
-    "dev": "next dev",
+    "ss": "pnpm dlx ts-node inject.ts",
+    "_dev": "next dev",
+    "dev": "pnpm ss && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

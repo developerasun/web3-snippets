@@ -10,5 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "gpg": "^0.6.0",
+    "shelljs": "^0.8.5"
   }
 }

@@ -1,4 +1,4 @@
-version: "3"
+version: "3.9"
 services:
   ganache:
     container_name: local-network
@@ -6,7 +6,9 @@ services:
       context: ./
       dockerfile: Dockerfile
     volumes:
-      - check:/app/data # create /app/data dir on container
+      - ./check:/app/data # create /app/data dir on container
+    secrets:
+      - super_secret
   dozzle:
     container_name: logger
     image: amir20/dozzle:latest
@@ -20,3 +22,7 @@ volumes:
   check:
     labels: # adding metadata
       com.localhost.description: "default volume config test"
+
+secrets:
+  super_secret:
+    file: ./test.txt

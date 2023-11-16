@@ -1,14 +1,15 @@
 FROM node:18-alpine
 
 WORKDIR /app
+# RUN mkdir data
 
 # specify destination only
-VOLUME  "/app/data" 
+# VOLUME  "/app/data" 
 
 # this will be stored on host machine.
-# hwere actually stored(window): \\wsl.localhost\docker-desktop-data\data\docker\volumes
+# here actually stored(window): \\wsl.localhost\docker-desktop-data\data\docker\volumes
 # linux: docker volume ls => mount point
-RUN echo "hello volume" > app/data/greeting.txt
+# RUN echo "hello volume" > /app/data/greeting.txt
 
 RUN npm install -g ganache-cli
 

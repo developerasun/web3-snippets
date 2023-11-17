@@ -1,0 +1,31 @@
+services:
+  ganache:
+    container_name: local-network
+    build:
+      context: /ganache
+
+  dozzle:
+    container_name: logger
+    image: amir20/dozzle:latest
+    volumes:
+      - /volume:/_volume
+    ports:
+      - 8888:8080
+  express:
+    container_name: express
+    ports:
+      - 9000:9000
+    environment:
+      - FOO:bar!
+      - SUPER_SECRET:/run/secrets/super_secret
+    build:
+      context: /app
+      dockerfile: Dockerfile
+    volumes:
+      - /volume:/_volume
+    secrets:
+      - super_secret
+
+secrets:
+  super_secret:
+    file: ./secret/secret.txt.gpg # should be relative

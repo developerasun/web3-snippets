@@ -1,31 +1,36 @@
+version: "3"
 services:
   ganache:
-    container_name: local-network
+    image: ganache
     build:
       context: /ganache
 
-  dozzle:
-    container_name: logger
-    image: amir20/dozzle:latest
-    volumes:
-      - /volume:/_volume
-    ports:
-      - 8888:8080
   express:
-    container_name: express
+    image: exress
     ports:
       - 9000:9000
     environment:
-      - FOO:bar!
-      - SUPER_SECRET:/run/secrets/super_secret
+      FOO: bar!
+      MESSAGE: >
+        -----BEGIN PGP MESSAGE-----
+
+        hF4DthANvg9OeT4SAQdAdrcHIdko0BorLQCw8QuBjkhG+MWAVGQHkPNmR1NweTkw
+        KR1nMYU33xkhXCpMkrhcQBtJ9kjDUbLlKSRiVRaKivUxTQ4Ayd0IXOG1b4PAy9jq
+        1LEBCQIQGwoGf97VKEfNFsP79sjkTh8ntT594vEeap5DyhLPxq0oDNlh6Vkc3bnj
+        jeXEkHO4AGXjwJrkvS2uT3UKk7c6I7N/IPX0PCcre8fOnXVbDlDOcdXR9SfKboN7
+        vb8PESnfOiIsdxQ0rXOmQ8O7UkbWqd0uthnbVxVqCXBnMqeoQKgWYYuKxoSeNGE8
+        P0IFnsounGkC2HcUj2Q/Ei/o/uyQbOUbg9gCiiXRxY9lIF8=
+        =NzXw
+        -----END PGP MESSAGE-----
+    secrets:
+      - super_secret
+    entrypoint: "/bin/sh -c 'SUPER_SECRET=`cat /run/secrets/super_secret` node app.js'"
     build:
       context: /app
       dockerfile: Dockerfile
     volumes:
-      - /volume:/_volume
-    secrets:
-      - super_secret
+      - /volume:/data/volume
 
 secrets:
   super_secret:
-    file: ./secret/secret.txt.gpg # should be relative
+    file: ./secret/message.asc

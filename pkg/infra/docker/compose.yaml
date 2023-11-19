@@ -33,4 +33,4 @@ services:
 
 secrets:
   super_secret:
-    file: ./secret/message.asc
+    file: ./secret/message.asc.txt

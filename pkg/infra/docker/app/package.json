@@ -4,12 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "kill": "npx kill-port 9000"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "express": "^4.18.2"
+  },
+  "dependencies": {
+    "is-docker": "^3.0.0",
+    "openpgp": "^5.11.0"
   }
 }

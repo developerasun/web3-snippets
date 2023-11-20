@@ -40,5 +40,11 @@ removeService() {
     docker service rm "${serviceName}"
 }
 
+# link a created secret to the existing service
+createSecret() {
+    docker secret create <name> <file>
+    docker service update <service-name> --secret-add <secret-name>
+}
+
 echo "${1}"
 initSwarm

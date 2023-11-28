@@ -1,0 +1,2 @@
+compress: zstd <file>
+decompress: zstd -d <file>

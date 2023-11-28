@@ -6,6 +6,8 @@ coverage
 coverage.json
 typechain
 
+pkg/shell/mac/bats-core/*
+
 # envs
 *.env
 

@@ -5,7 +5,7 @@ import { promisify } from "util";
 import { writeFile } from "fs/promises";
 import { writeFileSync } from "fs";
 
-const { PUBLIC_DATA_SERVICE_KEY } = process.env
+const { PUBLIC_DATA_SERVICE_KEY, JIRA_API_KEY, JIRA_DOMAIN_URL } = process.env
 
 const PREFIX = "hooks";
 
@@ -70,7 +70,7 @@ describe(`${PREFIX}-utility-hooks`, function TestHookFunctions() {
     console.log("next promise execution index at: ", retryAt);
   });
 
-  it.only("Should log epoch time in seconds", function TestEpochTime() {
+  it.skip("Should log epoch time in seconds", function TestEpochTime() {
     const { utc, local } = useEpochTime();
 
     console.log({ utc });
@@ -263,4 +263,21 @@ describe(`${PREFIX}-third-party-api`, function ThirdParty() {
 
     writeFileSync(`./assets/holiday/${year}-holidays.json`, JSON.stringify(holidays, null, 2))
   })
+
+  it.skip("should find out jira sprint contents", async function TestJiraSprint() {
+    const base = JIRA_DOMAIN_URL!
+    const sprintID = 99999
+    const options = {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${JIRA_API_KEY}`,
+      'Accept': 'application/json'
+      }
+    }
+    
+    const client = promisify(fetch)
+    const response = await client(`${base}/rest/agile/1.0/sprint/${sprintID}`, options)
+
+    console.log({response})
+    })
 })

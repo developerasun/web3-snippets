@@ -1,6 +1,11 @@
 import { logger, useCron, useEpochTime, useInterval } from "@scripts/hook";
 import { expect } from "chai";
-import { DateTime, FixedOffsetZone } from "luxon";
+import request from 'request'
+import { promisify } from "util";
+import { writeFile } from "fs/promises";
+import { writeFileSync } from "fs";
+
+const { PUBLIC_DATA_SERVICE_KEY } = process.env
 
 const PREFIX = "hooks";
 
@@ -65,7 +70,7 @@ describe(`${PREFIX}-utility-hooks`, function TestHookFunctions() {
     console.log("next promise execution index at: ", retryAt);
   });
 
-  it.skip("Should log epoch time in seconds", function TestEpochTime() {
+  it.only("Should log epoch time in seconds", function TestEpochTime() {
     const { utc, local } = useEpochTime();
 
     console.log({ utc });
@@ -218,10 +223,44 @@ describe(`${PREFIX}-promise-handle`, function TestHandlePromise() {
     expect(exampleJiraKey.match(regex)?.[0]).to.equal(target);
   });
 
-  it.only("Should check a proper ipfs cid", async function TestCID() {
+  it.skip("Should check a proper ipfs cid", async function TestCID() {
     const { cid } = await import("is-ipfs");
     const isValidCID = cid("QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB");
 
     expect(isValidCID).to.be.true;
   });
 });
+
+describe(`${PREFIX}-third-party-api`, function ThirdParty() {
+  it.skip("Should return proper holidays", async function TestPublicDataAPIs() {
+
+    const client = promisify(request)
+
+    const url = 'http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo';
+    const year = '2024'
+    const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+    const extension = 'json'
+
+    let holidays = []
+
+    for (const month of months) {
+      let queryParams = '?' + encodeURIComponent('serviceKey') + `=${PUBLIC_DATA_SERVICE_KEY}`;
+      queryParams += '&' + encodeURIComponent('solYear') + '=' + encodeURIComponent(year); 
+      queryParams += '&' + encodeURIComponent('solMonth') + '=' + encodeURIComponent(month); 
+      queryParams += '&' + encodeURIComponent('_type') + '=' + encodeURIComponent(extension)
+
+      const response = await client({
+        url: url + queryParams,
+        method: 'GET'
+      })
+
+      const { body } = response
+      const _body = JSON.parse(body)
+
+      holidays.push(_body)
+      // writeFileSync(`./assets/holiday/${year}-${month}.json`, JSON.stringify(_body, null, 2))
+    }
+
+    writeFileSync(`./assets/holiday/${year}-holidays.json`, JSON.stringify(holidays, null, 2))
+  })
+})

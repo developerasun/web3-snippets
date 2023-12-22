@@ -29,10 +29,7 @@
   "include": [
     "./hardhat.config.ts",
     "./scripts",
-    "./test/contracts",
-    "./test/_default",
-    "./test/hook",
-    "./test/mock",
+    "./test",
     "./assets/types",
   ],
   "files": [
